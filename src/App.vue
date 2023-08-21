@@ -2,6 +2,9 @@
 import { onMounted, ref, watch } from 'vue'
 const screenSize = { width: 1280, height: 720 };
 
+const video = document.getElementsByClassName('video')[0]
+const canvas = document.getElementsByClassName('canvas')[0]
+
 //後々で中身を定義してあげる子たち
 let media
 let mediaSize = screenSize//screenSizeは仮置き
@@ -47,13 +50,13 @@ function _canvasUpdate() {
 </script>
 
 <template>
-  <div id="videoPreview">
-    <video id="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
+  <div class="videoPreview">
+    <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas id="canvas" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" :width="screenSize.width" :height="screenSize.height" />
   </div>
-  <button id="startBtn" @click="startBtnOnClick">解析開始</button>
+  <button class="startBtn" @click="startBtnOnClick">解析開始</button>
 
 </template>
 
