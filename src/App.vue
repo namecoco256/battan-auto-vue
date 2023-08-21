@@ -54,6 +54,7 @@ function _canvasUpdate() {
     <canvas id="canvas" :width="screenSize.width" :height="screenSize.height" />
   </div>
   <button id="startBtn" @click="startBtnOnClick">解析開始</button>
+  <button id="calibrateBtn" @click="calibration">キャリブレーション</button>
 
 </template>
 
