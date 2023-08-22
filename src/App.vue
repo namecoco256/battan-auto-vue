@@ -71,14 +71,13 @@ function _canvasUpdate() {
 </script>
 
 <template>
-  <div id="videoPreview">
+  <div class="videoPreview">
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @click="canvasOnClick" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" :width="screenSize.width" :height="screenSize.height" />
   </div>
   <button class="startBtn" @click="startBtnOnClick">解析開始</button>
-  <button class="calibrateBtn" @click="calibration">キャリブレーション</button>
 
 </template>
 
