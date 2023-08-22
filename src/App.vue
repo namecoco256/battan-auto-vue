@@ -1,15 +1,39 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-const screenSize = { width: 1280, height: 720 };
+const screenSize = { width: 992, height: 744 };
 
 //後々で中身を定義してあげる子たち
 let media
 let mediaSize = screenSize//screenSizeは仮置き
 let canvasCtx
+
+let rect
+//document.getElementByClassNameするやつ
+let video
+let canvas
 onMounted(() => {
-  // コンテキストを定義
+  //有言実行。letを埋めます
+  video = document.getElementsByClassName('video')[0]
+  canvas = document.getElementsByClassName('canvas')[0]
+  //コンテキストを定義
   canvasCtx = canvas.getContext('2d');
 })
+
+const canvasOnClick = (e) => {
+  rect =     rect = e.target.getBoundingClientRect();
+  //ブラウザ上のクリック座標を求めるのです。
+  const viewX = e.clientX - rect.left
+  const viewY = e.clientY - rect.top
+  //キャンバスの表示サイズと実sizeの比も求めましょ。
+  const scaleWidth = canvas.clientWidth / canvas.width
+  const scaleHeight = canvas.clientHeight / canvas.height
+  //ブラウザ上のクリック座標をキャンバス上の座標に変換するよ。
+  const canvasX = Math.floor(viewX / scaleWidth)
+  const canvasY = Math.floor(viewY / scaleHeight)
+
+  console.log(canvasX, canvasY)
+}
+
 
 // video要素に画面の映像を表示するよ
 function startBtnOnClick() {
@@ -48,20 +72,20 @@ function _canvasUpdate() {
 
 <template>
   <div id="videoPreview">
-    <video id="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
+    <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas id="canvas" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" @click="canvasOnClick" :width="screenSize.width" :height="screenSize.height" />
   </div>
-  <button id="startBtn" @click="startBtnOnClick">解析開始</button>
-  <button id="calibrateBtn" @click="calibration">キャリブレーション</button>
+  <button class="startBtn" @click="startBtnOnClick">解析開始</button>
+  <button class="calibrateBtn" @click="calibration">キャリブレーション</button>
 
 </template>
 
 <style scoped>
-#canvas {
-  margin-top:5px;
-  width:50%;
+.canvas {
+  width:70vw;
+  min-width: 480px;
 }
 </style>
 
