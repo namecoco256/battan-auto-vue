@@ -1,5 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { get, set } from 'idb-keyval';
+
 const screenSize = { width: 992, height: 744 };
 
 //後々で中身を定義してあげる子たち
@@ -31,6 +33,13 @@ let selectRectangle = ref({
 
 //キャリブレーション中かどうかのフラグ
 const isCalibrating = ref(false)
+
+// バッタン入力配列
+// [y][x]
+let battan_input = Array(11);
+for (var i = 0; i < battan_input.length; i++) {
+  battan_input[i] = [false, false, false, false, false];
+}
 
 onMounted(() => {
   //有言実行。letした変数を埋めます
@@ -95,7 +104,7 @@ function canvasOnMouseUp(e){
 }
 
 // video要素に画面の映像を表示するよ
-function startBtnOnClick() {
+function onWindowSelect() {
   console.log('start')
   media = navigator.mediaDevices.getDisplayMedia({
     audio: false,
@@ -119,6 +128,10 @@ function _canvasUpdate() {
 
 //キャプチャ画面をレンダリングする関数
 function videoRendering(){
+  //まず画面全体を白でリセット
+  canvasCtx.fillStyle = "white";
+  canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+
   //縦横比を合わせつつキャンバスの大きさに合うよう拡大縮小
   if (canvas.width / mediaSize.width * mediaSize.height <= canvas.height) {//縦幅がcanvasの範囲に収まったら
     //横幅を固定して縦幅を調節する
@@ -129,7 +142,7 @@ function videoRendering(){
     let fixedWidth = canvas.height / mediaSize.height * mediaSize.width
     canvasCtx.drawImage(video, (canvas.width - fixedWidth) / 2, 0, fixedWidth, canvas.height)
   }
-  //キャリブレーション中なら半透明の四角形を置く
+  //キャリブレーション中なら画面を白くする
   if(isCalibrating.value){
     canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
@@ -137,12 +150,12 @@ function videoRendering(){
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
   canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
 }
-//選択範囲を数字からいじった場合
-watch(selectRectangle, ()=>{
-  videoRendering()
-
-  canvasCtx.strokeStyle = "rgb(255, 0, 0)"
-  canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+watch(selectRectangle.value, ()=>{
+  if(!isCalibrating.value){
+    console.log('changed!')
+    canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+    canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+  }
 })
 
 </script>
@@ -154,7 +167,7 @@ watch(selectRectangle, ()=>{
   <div id="canvasPreview">
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" width="992" height="744" />
   </div>
-  <button class="startBtn" @click="startBtnOnClick">解析開始</button>
+  <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
   <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
   <button class="calibrateBtn" @click="calibrate" v-else>キャリブレーションをキャンセル</button>
   <br />
