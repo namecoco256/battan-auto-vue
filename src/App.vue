@@ -137,6 +137,11 @@ function videoRendering(){
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
   canvasCtx.strokeRect(selectRectangle.startX, selectRectangle.startY, selectRectangle.endX, selectRectangle.endY)
 }
+//キャリブレーションボタンのテキストを変更するやつ。見た目だけ。
+watch(isCalibrating, () => {
+  const calibrateBtn = document.getElementsByClassName('calibrateBtn')[0]
+  isCalibrating.value ? calibrateBtn.innerHTML = 'キャリブレーションをキャンセル' : calibrateBtn.innerHTML = 'キャリブレーション'
+})
 
 </script>
 
