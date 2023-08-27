@@ -8,11 +8,15 @@ let mediaSize = screenSize//screenSizeは仮置き
 let canvasCtx
 let canvasId
 
+//キャンバス上のポインターの座標が入る
+let canvasX
+let canvasY
+
 //document.getElementByClassNameするやつ
 let video
 let canvas
 
-let selectRect = {
+let selectRectangle = {
   startY: 0,
   startX: 0,
   endY: 0,
@@ -26,7 +30,7 @@ let selectRect = {
 }
 
 //キャリブレーション中かどうかのフラグ
-let isCalibrating = false
+const isCalibrating = ref(false)
 
 onMounted(() => {
   //有言実行。letした変数を埋めます
@@ -37,34 +41,58 @@ onMounted(() => {
 })
 
 function calibrate() {
-  if(isCalibrating){
+  if(isCalibrating.value){
     _canvasUpdate()
-    isCalibrating = false
+    isCalibrating.value = false
+    console.log('isCalibrating == ', isCalibrating.value)
     return
   }
-  isCalibrating = true
+  isCalibrating.value = true
+  console.log('isCalibrating == ', isCalibrating.value)
   cancelAnimationFrame(canvasId)
-  canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
   //半透明の四角形を配置
+  canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
-//キャンバス上のクリック座標を求め、矩形選択の始点を決定
-const canvasOnClick = (e) => {
-  rect =     rect = e.target.getBoundingClientRect();
+function getPointerOnCanvas(mouseEvent){
+  const rect = mouseEvent.target.getBoundingClientRect();
   //ブラウザ上のクリック座標を求めるのです。
-  const viewX = e.clientX - rect.left
-  const viewY = e.clientY - rect.top
+  const viewX = mouseEvent.clientX - rect.left
+  const viewY = mouseEvent.clientY - rect.top
   //キャンバスの表示サイズと実sizeの比も求めましょ。
   const scaleWidth = canvas.clientWidth / canvas.width
   const scaleHeight = canvas.clientHeight / canvas.height
   //ブラウザ上のクリック座標をキャンバス上の座標に変換するよ。
-  const canvasX = Math.floor(viewX / scaleWidth)
-  const canvasY = Math.floor(viewY / scaleHeight)
-
-  console.log(canvasX, canvasY)
+  canvasX = Math.floor(viewX / scaleWidth)
+  canvasY = Math.floor(viewY / scaleHeight)
 }
 
+//キャンバス上のクリック座標を求め、矩形選択の始点を決定
+function canvasOnMouseDown(e){
+  getPointerOnCanvas(e)
+  console.log(canvasX, canvasY)
+
+  if(isCalibrating.value) {
+    selectRectangle.startX = canvasX
+    selectRectangle.startY = canvasY
+    canvas.addEventListener('mousemove', onMouseMove)
+  }
+}
+//選択範囲に枠線を引く
+function onMouseMove(e){
+  getPointerOnCanvas(e)
+  selectRectangle.endX = canvasX - selectRectangle.startX
+  selectRectangle.endY = canvasY - selectRectangle.startY
+  videoRendering()
+  //videoRendering()に枠線を書く処理が含まれてる
+}
+function canvasOnMouseUp(e){
+  canvas.removeEventListener('mousemove', onMouseMove)
+  isCalibrating.value = false
+  console.log(isCalibrating.value)
+  _canvasUpdate()
+}
 
 // video要素に画面の映像を表示するよ
 function startBtnOnClick() {
@@ -101,6 +129,13 @@ function videoRendering(){
     let fixedWidth = canvas.height / mediaSize.height * mediaSize.width
     canvasCtx.drawImage(video, (canvas.width - fixedWidth) / 2, 0, fixedWidth, canvas.height)
   }
+  //キャリブレーション中なら半透明の四角形を置く
+  if(isCalibrating.value){
+    canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
+    canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+  }
+  canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+  canvasCtx.strokeRect(selectRectangle.startX, selectRectangle.startY, selectRectangle.endX, selectRectangle.endY)
 }
 
 </script>
@@ -110,7 +145,7 @@ function videoRendering(){
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @click="canvasOnClick" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="screenSize.width" :height="screenSize.height" />
   </div>
   <button class="startBtn" @click="startBtnOnClick">解析開始</button>
   <button class="calibrateBtn" @click="calibrate">キャリブレーション</button>
