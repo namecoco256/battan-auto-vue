@@ -16,18 +16,18 @@ let canvasY
 let video
 let canvas
 
-let selectRectangle = {
-  startY: 0,
+let selectRectangle = ref({
   startX: 0,
-  endY: 0,
-  endX: 0,
+  startY: 0,
+  width: 0,
+  height: 0,
   clear: function () {
     this.startY = 0;
     this.startX = 0;
-    this.endY = 0;
-    this.endX = 0;
+    this.height = 0;
+    this.width = 0;
   }
-}
+})
 
 //キャリブレーション中かどうかのフラグ
 const isCalibrating = ref(false)
@@ -74,23 +74,23 @@ function canvasOnMouseDown(e){
   console.log(canvasX, canvasY)
 
   if(isCalibrating.value) {
-    selectRectangle.startX = canvasX
-    selectRectangle.startY = canvasY
+    selectRectangle.value.startX = canvasX
+    selectRectangle.value.startY = canvasY
     canvas.addEventListener('mousemove', onMouseMove)
   }
 }
 //選択範囲に枠線を引く
 function onMouseMove(e){
   getPointerOnCanvas(e)
-  selectRectangle.endX = canvasX - selectRectangle.startX
-  selectRectangle.endY = canvasY - selectRectangle.startY
+  selectRectangle.value.width = canvasX - selectRectangle.value.startX
+  selectRectangle.value.height = canvasY - selectRectangle.value.startY
   videoRendering()
   //videoRendering()に枠線を書く処理が含まれてる
 }
 function canvasOnMouseUp(e){
   canvas.removeEventListener('mousemove', onMouseMove)
   isCalibrating.value = false
-  console.log(isCalibrating.value)
+  console.log('isCalibrating ==', isCalibrating.value)
   _canvasUpdate()
 }
 
@@ -135,12 +135,14 @@ function videoRendering(){
     canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
   }
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
-  canvasCtx.strokeRect(selectRectangle.startX, selectRectangle.startY, selectRectangle.endX, selectRectangle.endY)
+  canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
 }
-//キャリブレーションボタンのテキストを変更するやつ。見た目だけ。
-watch(isCalibrating, () => {
-  const calibrateBtn = document.getElementsByClassName('calibrateBtn')[0]
-  isCalibrating.value ? calibrateBtn.innerHTML = 'キャリブレーションをキャンセル' : calibrateBtn.innerHTML = 'キャリブレーション'
+//選択範囲を数字からいじった場合
+watch(selectRectangle, ()=>{
+  videoRendering()
+
+  canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+  canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
 })
 
 </script>
@@ -150,17 +152,24 @@ watch(isCalibrating, () => {
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" width="992" height="744" />
   </div>
   <button class="startBtn" @click="startBtnOnClick">解析開始</button>
-  <button class="calibrateBtn" @click="calibrate">キャリブレーション</button>
-
+  <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
+  <button class="calibrateBtn" @click="calibrate" v-else>キャリブレーションをキャンセル</button>
+  <br />
+  <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
+  <br />
+  <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
 </template>
 
 <style scoped>
 .canvas {
-  width:70vw;
+  width: 70vw;
   min-width: 480px;
+}
+label {
+  margin: 1em;
 }
 </style>
 
