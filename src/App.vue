@@ -6,19 +6,50 @@ const screenSize = { width: 992, height: 744 };
 let media
 let mediaSize = screenSize//screenSizeは仮置き
 let canvasCtx
+let canvasId
 
-let rect
 //document.getElementByClassNameするやつ
 let video
 let canvas
+
+let selectRect = {
+  startY: 0,
+  startX: 0,
+  endY: 0,
+  endX: 0,
+  clear: function () {
+    this.startY = 0;
+    this.startX = 0;
+    this.endY = 0;
+    this.endX = 0;
+  }
+}
+
+//キャリブレーション中かどうかのフラグ
+let isCalibrating = false
+
 onMounted(() => {
-  //有言実行。letを埋めます
+  //有言実行。letした変数を埋めます
   video = document.getElementsByClassName('video')[0]
   canvas = document.getElementsByClassName('canvas')[0]
   //コンテキストを定義
   canvasCtx = canvas.getContext('2d');
 })
 
+function calibrate() {
+  if(isCalibrating){
+    _canvasUpdate()
+    isCalibrating = false
+    return
+  }
+  isCalibrating = true
+  cancelAnimationFrame(canvasId)
+  canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
+  //半透明の四角形を配置
+  canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+}
+
+//キャンバス上のクリック座標を求め、矩形選択の始点を決定
 const canvasOnClick = (e) => {
   rect =     rect = e.target.getBoundingClientRect();
   //ブラウザ上のクリック座標を求めるのです。
@@ -54,6 +85,12 @@ function startBtnOnClick() {
 }
 
 function _canvasUpdate() {
+  videoRendering()
+  canvasId = requestAnimationFrame(_canvasUpdate)
+};
+
+//キャプチャ画面をレンダリングする関数
+function videoRendering(){
   //縦横比を合わせつつキャンバスの大きさに合うよう拡大縮小
   if (canvas.width / mediaSize.width * mediaSize.height <= canvas.height) {//縦幅がcanvasの範囲に収まったら
     //横幅を固定して縦幅を調節する
@@ -64,9 +101,7 @@ function _canvasUpdate() {
     let fixedWidth = canvas.height / mediaSize.height * mediaSize.width
     canvasCtx.drawImage(video, (canvas.width - fixedWidth) / 2, 0, fixedWidth, canvas.height)
   }
-
-  requestAnimationFrame(_canvasUpdate)
-};
+}
 
 </script>
 
@@ -75,9 +110,10 @@ function _canvasUpdate() {
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" :width="screenSize.width" :height="screenSize.height" />
+    <canvas class="canvas" @click="canvasOnClick" :width="screenSize.width" :height="screenSize.height" />
   </div>
   <button class="startBtn" @click="startBtnOnClick">解析開始</button>
+  <button class="calibrateBtn" @click="calibrate">キャリブレーション</button>
 
 </template>
 
