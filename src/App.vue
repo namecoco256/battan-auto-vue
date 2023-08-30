@@ -185,28 +185,28 @@ function onSetRectangle(){
   let BattanInterval = Math.floor(selectRectangle.value.width * 0.1591)
   console.log('BattanInterval:',BattanInterval)
 
-  //[4][0]の横向きバッタンの座標を求め、これを基準として[8][4]までの横向きバッタンの座標も埋める
+  //[4][0]横向きバッタンの座標を求め、これを基準として他の横向きバッタンの座標も埋める
   const battanLandscapeOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2670), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786)}
   battan_position[4][0] = battanLandscapeOffset
-  for(let battanY = 2; battanY <= 8; battanY+=2) {
+  for(let battanY = 0; battanY <= 10; battanY+=2) {
     for(let battanX = 0; battanX <= 3; battanX++) {
       battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * BattanInterval)
+      console.log(battanX)
       battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * BattanInterval - BattanInterval *2)
     }
   }
 
-  //[3][0]の縦向きバッタンの座標を求め、これを基準として[7][5]までの縦向きバッタンの座標も埋める
+
+  //[3][0]の縦向きバッタンの座標を求め、これを基準として他の縦向きバッタンの座標も埋める
   const battanPortraitOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1818), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1071)}
-  console.log(battanPortraitOffset)
   battan_position[3][0] = battanPortraitOffset
-  for(let battanY = 3; battanY <= 7; battanY+=2) {
+  for(let battanY = 1; battanY <= 9; battanY+=2) {
     for(let battanX = 0; battanX <= 4; battanX++) {
-      console.log('battanPortraitOffset', battanPortraitOffset)
       battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * BattanInterval)
       battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY-3)/2 * BattanInterval)
     }
   }
-  console.log(selectRectangle, battan_position)
+  console.log(battan_position)
 
   console.log('battanLandscapeOffset:', battanLandscapeOffset, 'battanPortraitOffset', battanPortraitOffset)
 }
