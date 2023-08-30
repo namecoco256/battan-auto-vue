@@ -191,7 +191,6 @@ function onSetRectangle(){
   for(let battanY = 0; battanY <= 10; battanY+=2) {
     for(let battanX = 0; battanX <= 3; battanX++) {
       battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * BattanInterval)
-      console.log(battanX)
       battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * BattanInterval - BattanInterval *2)
     }
   }
