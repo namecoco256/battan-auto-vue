@@ -1,6 +1,6 @@
 # battan-auto-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+マリパ5のミニゲーム15パターンを自動で絞り込むwebアプリ(予定)です。今年中に完成したらいいな…(ﾄｵｲﾒ)
 
 ## Recommended IDE Setup
 
