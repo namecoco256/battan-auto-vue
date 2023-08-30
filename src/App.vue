@@ -181,10 +181,34 @@ function onSetRectangle(){
   //localstrageにselectRectangleの値を保存
   set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
 
-  //水平なバッタンの縦方向の間隔を求め、代入する
-  let HBattanInterval
-  //垂直なバッタンの横方向の間隔を求め、代入する
-  let VBattanInterval
+  //バッタン同士の間隔を求め、代入する
+  let BattanInterval = Math.floor(selectRectangle.value.width * 0.1591)
+  console.log('BattanInterval:',BattanInterval)
+
+  //[4][0]の横向きバッタンの座標を求め、これを基準として[8][4]までの横向きバッタンの座標も埋める
+  const battanLandscapeOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2670), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786)}
+  battan_position[4][0] = battanLandscapeOffset
+  for(let battanY = 2; battanY <= 8; battanY+=2) {
+    for(let battanX = 0; battanX <= 3; battanX++) {
+      battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * BattanInterval)
+      battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * BattanInterval - BattanInterval *2)
+    }
+  }
+
+  //[3][0]の縦向きバッタンの座標を求め、これを基準として[7][5]までの縦向きバッタンの座標も埋める
+  const battanPortraitOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1818), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1071)}
+  console.log(battanPortraitOffset)
+  battan_position[3][0] = battanPortraitOffset
+  for(let battanY = 3; battanY <= 7; battanY+=2) {
+    for(let battanX = 0; battanX <= 4; battanX++) {
+      console.log('battanPortraitOffset', battanPortraitOffset)
+      battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * BattanInterval)
+      battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY-3)/2 * BattanInterval)
+    }
+  }
+  console.log(selectRectangle, battan_position)
+
+  console.log('battanLandscapeOffset:', battanLandscapeOffset, 'battanPortraitOffset', battanPortraitOffset)
 }
 </script>
 
