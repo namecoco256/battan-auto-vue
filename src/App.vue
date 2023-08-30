@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { get, set } from 'idb-keyval';
 
 const screenSize = { width: 992, height: 744 };
-
+const canvasSize = { width: 992, height: 744 }
 //後々で中身を定義してあげる子たち
 let media
 let mediaSize = screenSize//screenSizeは仮置き
@@ -40,6 +40,12 @@ let battan_input = Array(11);
 for (var i = 0; i < battan_input.length; i++) {
   battan_input[i] = [false, false, false, false, false];
 }
+// バッタン座標配列
+// [y][x]['x':キャンバス上のバッタンx座標, 'y':キャンバス上のバッタンy座標]
+let battan_position = Array(11);
+for (var i = 0; i < battan_position.length; i++) {
+  battan_position[i] = [{ 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }];
+}
 
 onMounted(() => {
   //有言実行。letした変数を埋めます
@@ -47,6 +53,15 @@ onMounted(() => {
   canvas = document.getElementsByClassName('canvas')[0]
   //コンテキストを定義
   canvasCtx = canvas.getContext('2d');
+
+  get('selectRectangle').then((val) => {
+    if(val){
+      selectRectangle.value.startX = val[0]
+      selectRectangle.value.startY = val[1]
+      selectRectangle.value.width = val[2]
+      selectRectangle.value.height = val[3]
+    }
+  })
 })
 
 function calibrate() {
@@ -101,6 +116,8 @@ function canvasOnMouseUp(e){
   isCalibrating.value = false
   console.log('isCalibrating ==', isCalibrating.value)
   _canvasUpdate()
+
+  onSetRectangle()
 }
 
 // video要素に画面の映像を表示するよ
@@ -155,9 +172,20 @@ watch(selectRectangle.value, ()=>{
     console.log('changed!')
     canvasCtx.strokeStyle = "rgb(255, 0, 0)"
     canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+    
+    onSetRectangle()
   }
 })
 
+function onSetRectangle(){
+  //localstrageにselectRectangleの値を保存
+  set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
+
+  //水平なバッタンの縦方向の間隔を求め、代入する
+  let HBattanInterval
+  //垂直なバッタンの横方向の間隔を求め、代入する
+  let VBattanInterval
+}
 </script>
 
 <template>
@@ -165,7 +193,7 @@ watch(selectRectangle.value, ()=>{
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" width="992" height="744" />
+    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
   <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
   <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
