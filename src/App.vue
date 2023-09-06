@@ -132,6 +132,7 @@ function onWindowSelect() {
     //mediaの縦と横のピクセル数を代入。このgetVideoTracks()[0].getSettings().widthってやつ探すの死ぬほど大変だったんだけど！！！！
     mediaSize.width = video.srcObject.getVideoTracks()[0].getSettings().width
     mediaSize.height = video.srcObject.getVideoTracks()[0].getSettings().height
+    console.log(mediaSize)
   });
 
   // video要素の映像をcanvasに描画する
@@ -159,6 +160,7 @@ function videoRendering(){
     let fixedWidth = canvas.height / mediaSize.height * mediaSize.width
     canvasCtx.drawImage(video, (canvas.width - fixedWidth) / 2, 0, fixedWidth, canvas.height)
   }
+
   //キャリブレーション中なら画面を白くする
   if(isCalibrating.value){
     canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
@@ -166,7 +168,15 @@ function videoRendering(){
   }
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
   canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+
+  for(let battanY = 0; battanY < battan_position.length; battanY++){
+    for(let battanX = 0; battanX < battan_position[battanY].length; battanX++) {
+      canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+      canvasCtx.fillRect(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 2, 2)
+    }
+  }
 }
+
 watch(selectRectangle.value, ()=>{
   if(!isCalibrating.value){
     console.log('changed!')
@@ -181,28 +191,31 @@ function onSetRectangle(){
   //localstrageにselectRectangleの値を保存
   set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
 
-  //バッタン同士の間隔を求め、代入する
-  let BattanInterval = Math.floor(selectRectangle.value.width * 0.1591)
-  console.log('BattanInterval:',BattanInterval)
+  //横向きバッタン同士の間隔を求め、代入する
+  let HBattanInterval = Math.floor(selectRectangle.value.width * 0.1540)
+  console.log('HBattanInterval:',HBattanInterval)
 
   //[4][0]横向きバッタンの座標を求め、これを基準として他の横向きバッタンの座標も埋める
-  const battanLandscapeOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2670), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786)}
+  const battanLandscapeOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2636), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786)}
   battan_position[4][0] = battanLandscapeOffset
   for(let battanY = 0; battanY <= 10; battanY+=2) {
     for(let battanX = 0; battanX <= 3; battanX++) {
-      battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * BattanInterval)
-      battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * BattanInterval - BattanInterval *2)
+      battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * HBattanInterval)
+      battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * HBattanInterval - HBattanInterval *2)
     }
   }
 
+  //縦向きバッタン同士の間隔を求め、代入する
+  let VBattanInterval = Math.floor(selectRectangle.value.width * 0.1600)
+  console.log('VBattanInterval:',VBattanInterval)
 
   //[3][0]の縦向きバッタンの座標を求め、これを基準として他の縦向きバッタンの座標も埋める
-  const battanPortraitOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1818), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1071)}
+  const battanPortraitOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1775), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1160)}
   battan_position[3][0] = battanPortraitOffset
   for(let battanY = 1; battanY <= 9; battanY+=2) {
     for(let battanX = 0; battanX <= 4; battanX++) {
-      battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * BattanInterval)
-      battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY-3)/2 * BattanInterval)
+      battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * VBattanInterval)
+      battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY-3)/2 * VBattanInterval)
     }
   }
   console.log(battan_position)
