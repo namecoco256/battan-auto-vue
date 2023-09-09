@@ -33,6 +33,8 @@ let selectRectangle = ref({
 
 //キャリブレーション中かどうかのフラグ
 const isCalibrating = ref(false)
+//スキャン中かどうかのフラグ
+const isScanning = ref(false)
 
 // バッタン入力配列
 // [y][x]
@@ -77,6 +79,15 @@ function calibrate() {
   //半透明の四角形を配置
   canvasCtx.fillStyle = "rgba(" + [255, 255, 255, 0.3] + ")";
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+}
+
+function onScanBtn(){
+  if(isScanning.value){
+    //スキャン停止する時の処理
+    isScanning.value = false
+  }
+  isScanning.value = true
+  //スキャン開始時の処理
 }
 
 function getPointerOnCanvas(mouseEvent){
@@ -195,7 +206,7 @@ function onSetRectangle(){
 
   //横向きバッタン同士の間隔を求め、代入する
   let HBattanHInterval = Math.floor(selectRectangle.value.width * 0.1540)
-  let HBattanVInterval = Math.floor(selectRectangle.value.height * 0.6500)
+  let HBattanVInterval = Math.floor(selectRectangle.value.height * 0.6452)
   console.log('HBattanHInterval:',HBattanHInterval,'HBattanVInterval:',HBattanVInterval)
 
   //[4][0]横向きバッタンの座標を求め、これを基準として他の横向きバッタンの座標も埋める
@@ -245,7 +256,9 @@ function onSetRectangle(){
   <div id="canvasPreview">
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
-  </template>
+  <button class="scanBtn" @click="scan" v-if="!isScanning">スキャン</button>
+  <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
+</template>
 
 <style scoped>
 .settings {
