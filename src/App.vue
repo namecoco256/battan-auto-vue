@@ -229,28 +229,37 @@ function onSetRectangle(){
 </script>
 
 <template>
+  <section class="settings">
+    <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
+    <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
+    <button class="calibrateBtn" @click="calibrate" v-else>キャリブレーションをキャンセル</button>
+    <br />
+    <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
+    <br />
+    <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
+  </section>
+
   <div class="videoPreview">
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
-  <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
-  <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
-  <button class="calibrateBtn" @click="calibrate" v-else>キャリブレーションをキャンセル</button>
-  <br />
-  <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
-  <br />
-  <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
-</template>
+  </template>
 
 <style scoped>
+.settings {
+  margin: 15px auto;
+}
 .canvas {
-  width: 70vw;
-  min-width: 480px;
+  height: 90%;
+  max-height: 744px;
 }
+
 label {
-  margin: 1em;
+  margin: 2px 1em;
+  display: inline-block;
 }
+
 </style>
 
