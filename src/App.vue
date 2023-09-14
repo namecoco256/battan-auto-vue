@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { get, set } from 'idb-keyval';
-import battan_pattern from 'patterns.js'
+import PatternDisplay from './components/PatternDisplay.vue'
 
+///// 変数・配列の定義 /////
 const screenSize = { width: 992, height: 744 };
 const canvasSize = { width: 992, height: 744 }
 //後々で中身を定義してあげる子たち
@@ -38,10 +39,11 @@ const isCalibrating = ref(false)
 const isScanning = ref(false)
 
 // バッタン入力配列
+// 0:未入力 1:バッタンあり
 // [y][x]
 let battan_input = Array(11);
 for (var i = 0; i < battan_input.length; i++) {
-  battan_input[i] = [false, false, false, false, false];
+  battan_input[i] = [0, 0, 0, 0, 0];
 }
 // バッタン座標配列
 // [y][x]['x':キャンバス上のバッタンx座標, 'y':キャンバス上のバッタンy座標]
@@ -50,13 +52,20 @@ for (var i = 0; i < battan_position.length; i++) {
   battan_position[i] = [{ 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }];
 }
 
+//バッタン色を指定。これを使ってバッタンがそこにいるかどうか判定する
+const minColor = { r:36, g:36, b:36 }
+const maxColor = { r:75, g:75, b:75 }
+///// 変数・配列の定義ここまで /////
+
+///// 起動時のセットアップ /////
 onMounted(() => {
-  //有言実行。letした変数を埋めます
+  //videoとcanvasを指定する
   video = document.getElementsByClassName('video')[0]
   canvas = document.getElementsByClassName('canvas')[0]
   //コンテキストを定義
   canvasCtx = canvas.getContext('2d');
 
+  //ブラウザに選択範囲が保存されていれば代入
   get('selectRectangle').then((val) => {
     if(val){
       selectRectangle.value.startX = val[0]
@@ -66,14 +75,19 @@ onMounted(() => {
     }
   })
 })
+///// 起動時のセットアップここまで /////
 
+///// ボタン押下時の処理 /////
 function onCalibrateBtn() {
+  //キャリブレーションボタンを押したときの処理
   if(isCalibrating.value){
+    //キャリブレーション中止時の処理
     _canvasUpdate()
     isCalibrating.value = false
     console.log('isCalibrating == ', isCalibrating.value)
     return
   }
+  //キャリブレーション開始時の処理
   isCalibrating.value = true
   console.log('isCalibrating == ', isCalibrating.value)
   cancelAnimationFrame(canvasId)
@@ -83,16 +97,20 @@ function onCalibrateBtn() {
 }
 
 function onScanBtn(){
+  //スキャンボタンを押したときの処理
   if(isScanning.value){
-    //スキャン停止する時の処理
+    //スキャン停止時の処理
     isScanning.value = false
     return
   }
   isScanning.value = true
   //スキャン開始時の処理
 }
+///// ボタン押下時の処理ここまで /////
 
+///// 矩形選択系の処理 /////
 function getPointerOnCanvas(mouseEvent){
+  // キャンバスをクリックしたときのマウスの座標を求める
   const rect = mouseEvent.target.getBoundingClientRect();
   //ブラウザ上のクリック座標を求めるのです。
   const viewX = mouseEvent.clientX - rect.left
@@ -105,8 +123,8 @@ function getPointerOnCanvas(mouseEvent){
   canvasY = Math.floor(viewY / scaleHeight)
 }
 
-//キャンバス上のクリック座標を求め、矩形選択の始点を決定
 function canvasOnMouseDown(e){
+  //キャンバス上のクリック座標を求め、矩形選択の始点を決定
   getPointerOnCanvas(e)
   console.log(canvasX, canvasY)
 
@@ -116,15 +134,17 @@ function canvasOnMouseDown(e){
     canvas.addEventListener('mousemove', onMouseMove)
   }
 }
-//選択範囲に枠線を引く
+
 function onMouseMove(e){
+  //マウスが動いた時にselectRectangleの横幅、縦幅を指定しなおす
   getPointerOnCanvas(e)
   selectRectangle.value.width = canvasX - selectRectangle.value.startX
   selectRectangle.value.height = canvasY - selectRectangle.value.startY
   videoRendering()
-  //videoRendering()に枠線を書く処理が含まれてる
+  //videoRendering()をここで呼ぶことで、選択範囲を示す赤線を書き直す
 }
 function canvasOnMouseUp(e){
+  //ドラッグが終わったら後片付けをする
   canvas.removeEventListener('mousemove', onMouseMove)
   isCalibrating.value = false
   console.log('isCalibrating ==', isCalibrating.value)
@@ -133,8 +153,64 @@ function canvasOnMouseUp(e){
   onSetRectangle()
 }
 
-// video要素に画面の映像を表示するよ
+watch(selectRectangle.value, () => {
+  if (!isCalibrating.value) {
+    console.log('changed!')
+    canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+    canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+
+    onSetRectangle()
+  }
+})
+
+function onSetRectangle() {
+  //選択範囲の数字をいじった時に呼ばれる関数。たびたび出てきてたでしょ？
+  
+  //localstrageにselectRectangleの値を保存
+  set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
+  setBattanPosition()
+}
+function setBattanPosition() {
+  //バッタンの位置を配列に代入する関数。これ元々onSetRectangle()に入ってた処理なんですが、分けちゃって良かったですよね？
+
+  //横向きバッタン同士の間隔を求め、代入する
+  let HBattanHInterval = Math.floor(selectRectangle.value.width * 0.1540)
+  let HBattanVInterval = Math.floor(selectRectangle.value.height * 0.6452)
+  console.log('HBattanHInterval:', HBattanHInterval, 'HBattanVInterval:', HBattanVInterval)
+
+  //[4][0]横向きバッタンの座標を求め、これを基準として他の横向きバッタンの座標も埋める
+  const battanLandscapeOffset = { 'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2636), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786) }
+  battan_position[4][0] = battanLandscapeOffset
+  for (let battanY = 0; battanY <= 10; battanY += 2) {
+    for (let battanX = 0; battanX <= 3; battanX++) {
+      battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * HBattanHInterval)
+      battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY / 2 * HBattanVInterval - HBattanVInterval * 2)
+    }
+  }
+
+  //縦向きバッタン同士の間隔を求め、代入する
+  let VBattanHInterval = Math.floor(selectRectangle.value.width * 0.1600)
+  let VBattanVInterval = Math.floor(selectRectangle.value.height * 0.6250)
+  console.log('VBattanHInterval:', VBattanHInterval, 'VBattanVInterval:', VBattanVInterval)
+
+  //[3][0]の縦向きバッタンの座標を求め、これを基準として他の縦向きバッタンの座標も埋める
+  const battanPortraitOffset = { 'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1775), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1160) }
+  battan_position[3][0] = battanPortraitOffset
+  for (let battanY = 1; battanY <= 9; battanY += 2) {
+    for (let battanX = 0; battanX <= 4; battanX++) {
+      battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * VBattanHInterval)
+      battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY - 3) / 2 * VBattanVInterval)
+    }
+  }
+  console.log(battan_position)
+
+  console.log('battanLandscapeOffset:', battanLandscapeOffset, 'battanPortraitOffset', battanPortraitOffset)
+}
+///// 矩形選択系の処理ここまで /////
+
+///// 画面取得とレンダリング /////
 function onWindowSelect() {
+  // video要素に画面の映像を表示する
   console.log('start')
   media = navigator.mediaDevices.getDisplayMedia({
     audio: false,
@@ -182,64 +258,37 @@ function videoRendering(){
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
   canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
 
-  //バッタンの出てくる位置に点を表示
+  //バッタンをスキャン。スキャン中じゃなければ点を表示
   for(let battanY = 0; battanY < battan_position.length; battanY++){
     for(let battanX = 0; battanX < battan_position[battanY].length; battanX++) {
-      canvasCtx.strokeStyle = "rgb(255, 0, 0)"
-      canvasCtx.fillRect(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 2, 2)
+      if(isScanning.value) {
+        //スキャン中なら、battan_positionの座標の色をスキャンしてバッタンが出てるかどうかを確認する
+        //まずbattanX, BattanYの色を取得
+        const data = canvasCtx.getImageData(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 1, 1)
+        const currentPosColor = { r:data[0], g:data[1], b:data[2] }
+
+        if(checkTargetColor(currentPosColor, minColor, maxColor))
+        {
+          battan_input[battanY][battanX] = 1
+          console.log(battanX,battanY)
+        }
+      } else {
+        canvasCtx.strokeStyle = "rgb(255, 0, 0)"
+        canvasCtx.fillRect(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 2, 2)
+      }
+      
     }
   }
 }
 
-//選択範囲の数字をいじった時
-watch(selectRectangle.value, ()=>{
-  if(!isCalibrating.value){
-    console.log('changed!')
-    canvasCtx.strokeStyle = "rgb(255, 0, 0)"
-    canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
-    
-    onSetRectangle()
-  }
-})
-
-function onSetRectangle(){
-  //localstrageにselectRectangleの値を保存
-  set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
-
-
-  //横向きバッタン同士の間隔を求め、代入する
-  let HBattanHInterval = Math.floor(selectRectangle.value.width * 0.1540)
-  let HBattanVInterval = Math.floor(selectRectangle.value.height * 0.6452)
-  console.log('HBattanHInterval:',HBattanHInterval,'HBattanVInterval:',HBattanVInterval)
-
-  //[4][0]横向きバッタンの座標を求め、これを基準として他の横向きバッタンの座標も埋める
-  const battanLandscapeOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.2636), 'y': parseInt(selectRectangle.value.startY) + Math.floor(selectRectangle.value.height * 0.1786)}
-  battan_position[4][0] = battanLandscapeOffset
-  for(let battanY = 0; battanY <= 10; battanY+=2) {
-    for(let battanX = 0; battanX <= 3; battanX++) {
-      battan_position[battanY][battanX].x = battanLandscapeOffset.x + (battanX * HBattanHInterval)
-      battan_position[battanY][battanX].y = battanLandscapeOffset.y + (battanY/2 * HBattanVInterval - HBattanVInterval *2)
-    }
-  }
-
-  //縦向きバッタン同士の間隔を求め、代入する
-  let VBattanHInterval = Math.floor(selectRectangle.value.width * 0.1600)
-  let VBattanVInterval = Math.floor(selectRectangle.value.height * 0.6250)
-  console.log('VBattanHInterval:',VBattanHInterval,'VBattanVInterval:',VBattanVInterval)
-
-  //[3][0]の縦向きバッタンの座標を求め、これを基準として他の縦向きバッタンの座標も埋める
-  const battanPortraitOffset = {'x': parseInt(selectRectangle.value.startX) + Math.floor(selectRectangle.value.width * 0.1775), 'y': parseInt(selectRectangle.value.startY) - Math.floor(selectRectangle.value.height * 0.1160)}
-  battan_position[3][0] = battanPortraitOffset
-  for(let battanY = 1; battanY <= 9; battanY+=2) {
-    for(let battanX = 0; battanX <= 4; battanX++) {
-      battan_position[battanY][battanX].x = battanPortraitOffset.x + (battanX * VBattanHInterval)
-      battan_position[battanY][battanX].y = battanPortraitOffset.y + ((battanY-3)/2 * VBattanVInterval)
-    }
-  }
-  console.log(battan_position)
-
-  console.log('battanLandscapeOffset:', battanLandscapeOffset, 'battanPortraitOffset', battanPortraitOffset)
+function checkTargetColor(current, min, max) {
+  //currentに入れた色が指定した範囲に収まっているかどうかの関数
+  if (min.r > current.r || current.r > max.r) return
+  if (min.g > current.g || current.g > max.g) return
+  if (min.b > current.b || current.b > max.b) return
+  return true
 }
+///// 画面処理とレンダリングここまで /////
 </script>
 
 <template>
@@ -262,6 +311,8 @@ function onSetRectangle(){
   <div id="canvasPreview">
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
+
+  <PatternDisplay :battanInput='battan_input' v-if="isScanning"/>
 </template>
 
 <style scoped>

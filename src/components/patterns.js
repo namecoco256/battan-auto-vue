@@ -197,3 +197,7 @@ const battan_pattern = [
 	],
 	
 ];
+
+export default{
+  components: battan_pattern
+}
