@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { get, set } from 'idb-keyval';
-import { battan_pattern } from './components/pattern.js'
+import battan_pattern from 'patterns.js'
 
 const screenSize = { width: 992, height: 744 };
 const canvasSize = { width: 992, height: 744 }
