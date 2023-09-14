@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { get, set } from 'idb-keyval';
+import { battan_pattern } from './components/pattern.js'
 
 const screenSize = { width: 992, height: 744 };
 const canvasSize = { width: 992, height: 744 }
@@ -66,7 +67,7 @@ onMounted(() => {
   })
 })
 
-function calibrate() {
+function onCalibrateBtn() {
   if(isCalibrating.value){
     _canvasUpdate()
     isCalibrating.value = false
@@ -85,6 +86,7 @@ function onScanBtn(){
   if(isScanning.value){
     //スキャン停止する時の処理
     isScanning.value = false
+    return
   }
   isScanning.value = true
   //スキャン開始時の処理
@@ -189,6 +191,7 @@ function videoRendering(){
   }
 }
 
+//選択範囲の数字をいじった時
 watch(selectRectangle.value, ()=>{
   if(!isCalibrating.value){
     console.log('changed!')
@@ -242,12 +245,15 @@ function onSetRectangle(){
 <template>
   <section class="settings">
     <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
-    <button class="calibrateBtn" @click="calibrate" v-if="!isCalibrating">キャリブレーション</button>
-    <button class="calibrateBtn" @click="calibrate" v-else>キャリブレーションをキャンセル</button>
+    <button class="onononCalibrateBtnBtnBtnBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</button>
+    <button class="onononCalibrateBtnBtnBtnBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</button>
     <br />
     <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
     <br />
     <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
+    <br />
+    <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
+    <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
   </section>
 
   <div class="videoPreview">
@@ -256,8 +262,6 @@ function onSetRectangle(){
   <div id="canvasPreview">
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
-  <button class="scanBtn" @click="scan" v-if="!isScanning">スキャン</button>
-  <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
 </template>
 
 <style scoped>
