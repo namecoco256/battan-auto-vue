@@ -53,7 +53,7 @@ for (var i = 0; i < battan_position.length; i++) {
 }
 
 //バッタン色を指定。これを使ってバッタンがそこにいるかどうか判定する
-const minColor = { r:36, g:36, b:36 }
+const minColor = { r:33, g:33, b:33 }
 const maxColor = { r:75, g:75, b:75 }
 ///// 変数・配列の定義ここまで /////
 
@@ -101,10 +101,17 @@ function onScanBtn(){
   if(isScanning.value){
     //スキャン停止時の処理
     isScanning.value = false
+    console.log(battan_input)
     return
   }
   isScanning.value = true
   //スキャン開始時の処理
+}
+function reset() {
+  console.log('battan_input has been reset')
+  for (var i = 0; i < battan_input.length; i++) {
+    battan_input[i] = [0, 0, 0, 0, 0];
+  }
 }
 ///// ボタン押下時の処理ここまで /////
 
@@ -264,13 +271,14 @@ function videoRendering(){
       if(isScanning.value) {
         //スキャン中なら、battan_positionの座標の色をスキャンしてバッタンが出てるかどうかを確認する
         //まずbattanX, BattanYの色を取得
-        const data = canvasCtx.getImageData(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 1, 1)
+        const data = canvasCtx.getImageData(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 1, 1).data
         const currentPosColor = { r:data[0], g:data[1], b:data[2] }
 
-        if(checkTargetColor(currentPosColor, minColor, maxColor))
+        if(checkTargetColor(currentPosColor, minColor, maxColor) == true)
         {
           battan_input[battanY][battanX] = 1
-          console.log(battanX,battanY)
+          console.log('battanX',battanX,'battanY',battanY)
+          console.log(battan_input)
         }
       } else {
         canvasCtx.strokeStyle = "rgb(255, 0, 0)"
@@ -283,9 +291,9 @@ function videoRendering(){
 
 function checkTargetColor(current, min, max) {
   //currentに入れた色が指定した範囲に収まっているかどうかの関数
-  if (min.r > current.r || current.r > max.r) return
-  if (min.g > current.g || current.g > max.g) return
-  if (min.b > current.b || current.b > max.b) return
+  if (min.r >= current.r || current.r >= max.r) return false
+  if (min.g >= current.g || current.g >= max.g) return false
+  if (min.b >= current.b || current.b >= max.b) return false
   return true
 }
 ///// 画面処理とレンダリングここまで /////
@@ -303,6 +311,7 @@ function checkTargetColor(current, min, max) {
     <br />
     <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
     <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
+    <button @click="reset">リセット</button>
   </section>
 
   <div class="videoPreview">
