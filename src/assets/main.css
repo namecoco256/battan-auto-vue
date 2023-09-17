@@ -1,1 +1,29 @@
 @import './base.css';
+.settings {
+  margin: 15px auto;
+}
+.canvas {
+  height: 90%;
+  max-height: 744px;
+}
+label {
+  margin: 2px 1em;
+  display: inline-block;
+}
+
+.matches{
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  justify-content: space-between;
+}
+.matches li {
+  margin:1em;
+  padding:1em;
+  background-color: #aaaaaa;
+  width:fit-content;
+}
+.matches li img{
+  display: block;  
+  object-fit: contain;
+}

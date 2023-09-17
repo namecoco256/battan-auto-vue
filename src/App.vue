@@ -332,18 +332,7 @@ function checkTargetColor(current, min, max) {
 </template>
 
 <style scoped>
-.settings {
-  margin: 15px auto;
-}
-.canvas {
-  height: 90%;
-  max-height: 744px;
-}
 
-label {
-  margin: 2px 1em;
-  display: inline-block;
-}
 
 </style>
 

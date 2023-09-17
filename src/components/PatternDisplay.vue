@@ -101,8 +101,14 @@ defineExpose({
 </script>
 
 <template>
-  <li v-for="match in matchListUrl">
-    <img :src="match">
-  </li>
-  <p>test</p>
+  <h1>パターン候補</h1>
+  <ul class="matches">
+    <li v-for="match in matchListUrl">
+      <img :src="match">
+    </li>
+  </ul>
 </template>
+
+<style scoped>
+
+</style>
