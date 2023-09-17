@@ -20,6 +20,8 @@ let canvasY
 let video
 let canvas
 
+const patternDisplay = ref()
+
 let selectRectangle = ref({
   startX: 0,
   startY: 0,
@@ -41,9 +43,9 @@ const isScanning = ref(false)
 // バッタン入力配列
 // 0:未入力 1:バッタンあり
 // [y][x]
-let battan_input = Array(11);
-for (var i = 0; i < battan_input.length; i++) {
-  battan_input[i] = [0, 0, 0, 0, 0];
+let battan_input = ref(Array(11));
+for (var i = 0; i < battan_input.value.length; i++) {
+  battan_input.value[i] = [0, 0, 0, 0, 0];
 }
 // バッタン座標配列
 // [y][x]['x':キャンバス上のバッタンx座標, 'y':キャンバス上のバッタンy座標]
@@ -101,17 +103,18 @@ function onScanBtn(){
   if(isScanning.value){
     //スキャン停止時の処理
     isScanning.value = false
-    console.log(battan_input)
     return
   }
   isScanning.value = true
+  reset()
   //スキャン開始時の処理
 }
 function reset() {
-  console.log('battan_input has been reset')
-  for (var i = 0; i < battan_input.length; i++) {
-    battan_input[i] = [0, 0, 0, 0, 0];
+  console.log('battan_input.value has been reset')
+  for (var i = 0; i < battan_input.value.length; i++) {
+    battan_input.value[i] = [0, 0, 0, 0, 0];
   }
+  patternDisplay.value.onChangeBattanInput(battan_input)
 }
 ///// ボタン押下時の処理ここまで /////
 
@@ -276,9 +279,13 @@ function videoRendering(){
 
         if(checkTargetColor(currentPosColor, minColor, maxColor) == true)
         {
-          battan_input[battanY][battanX] = 1
+          //チェックした座標にバッタンがいた場合
+          battan_input.value[battanY][battanX] = 1
           console.log('battanX',battanX,'battanY',battanY)
-          console.log(battan_input)
+          console.log(battan_input.value)
+
+          //↓こいつ、ホントはbattan_inputをwatchして呼び出したかったんですが、なぜか変更を検知しやがらなかったのでクソみてーな書き方をしてます。助けて有識者
+          patternDisplay.value.onChangeBattanInput(battan_input)
         }
       } else {
         canvasCtx.strokeStyle = "rgb(255, 0, 0)"
@@ -321,7 +328,7 @@ function checkTargetColor(current, min, max) {
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
 
-  <PatternDisplay :battanInput='battan_input' v-if="isScanning"/>
+  <PatternDisplay ref='patternDisplay' /><!--v-if="isScanning"-->
 </template>
 
 <style scoped>
