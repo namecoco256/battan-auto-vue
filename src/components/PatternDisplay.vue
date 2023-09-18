@@ -89,6 +89,7 @@ function onChangeBattanInput(battan_input){
 
 watch(matchList,()=>{
   console.log(matchList.value)
+  matchListUrl.value = []
   for(i=0;i<matchList.value.length;i++){
     matchListUrl.value[i] = 'src/assets/pattern-image/'+matchList.value[i]+'.png'
   }
