@@ -57,6 +57,11 @@ for (var i = 0; i < battan_position.length; i++) {
 //バッタン色を指定。これを使ってバッタンがそこにいるかどうか判定する
 const minColor = { r:33, g:33, b:33 }
 const maxColor = { r:75, g:75, b:75 }
+//ミニゲーム中かどうかを判断するためタイマーの色も指定。
+const timerMinColor = [{ r: 80, g: 100, b: 80 }, { r: 1, g: 33, b: 84 }]
+const timerMaxColor = [{ r: 155, g: 150, b: 118 }, { r: 20, g: 43, b: 58 }]
+
+let isGaming = false
 ///// 変数・配列の定義ここまで /////
 
 ///// 起動時のセットアップ /////
@@ -114,6 +119,7 @@ function reset() {
   for (var i = 0; i < battan_input.value.length; i++) {
     battan_input.value[i] = [0, 0, 0, 0, 0];
   }
+  isGaming = false
   patternDisplay.value.onChangeBattanInput(battan_input)
 }
 ///// ボタン押下時の処理ここまで /////
@@ -268,11 +274,18 @@ function videoRendering(){
   canvasCtx.strokeStyle = "rgb(255, 0, 0)"
   canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
 
-  //バッタンをスキャン。スキャン中じゃなければ点を表示
+  //バッタンをスキャン。スキャン中かつミニゲーム中じゃなければ点を表示
+  if(isScanning.value) checkGaming()
   for(let battanY = 0; battanY < battan_position.length; battanY++){
     for(let battanX = 0; battanX < battan_position[battanY].length; battanX++) {
-      if(isScanning.value) {
+      if(isScanning.value && isGaming) {
         //スキャン中なら、battan_positionの座標の色をスキャンしてバッタンが出てるかどうかを確認する
+
+        //タイマーと被る可能性のあるバッタンをスキップ
+        if(battanY == 0) continue
+        if(battanY == 1 && battanX == 2) continue
+        if(battanY == 10) continue
+
         //まずbattanX, BattanYの色を取得
         const data = canvasCtx.getImageData(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 1, 1).data
         const currentPosColor = { r:data[0], g:data[1], b:data[2] }
@@ -292,6 +305,28 @@ function videoRendering(){
         canvasCtx.fillRect(battan_position[battanY][battanX].x, battan_position[battanY][battanX].y, 2, 2)
       }
       
+    }
+  }
+}
+
+function checkGaming() {
+  const data = [
+    canvasCtx.getImageData(battan_position[1][2].x, battan_position[1][2].y, 1, 1).data,
+    canvasCtx.getImageData(battan_position[0][2].x, battan_position[0][2].y, 1, 1).data,
+  ]
+  const currentPosColor = [{ r: data[0][0], g: data[0][1], b: data[0][2]}, { r: data[1][0], g: data[1][1], b: data[1][2] }]
+
+  for(let i=0;i<data.length;i++){
+    for(let j=0;j<timerMaxColor.length;j++){
+      if(checkTargetColor(currentPosColor[i],timerMinColor[j],timerMaxColor[j])){
+        isGaming = true
+        console.log('isGaming is',isGaming)
+        break 
+      } else if (i == data.length){
+        isGaming = false
+        console.log('isGaming is', isGaming)
+        break
+      }
     }
   }
 }
