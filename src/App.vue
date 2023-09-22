@@ -120,6 +120,7 @@ function reset() {
     battan_input.value[i] = [0, 0, 0, 0, 0];
   }
   isGaming = false
+  //本来はbattan_inputの変更をPatternDisplay側で検知したかった
   patternDisplay.value.onChangeBattanInput(battan_input)
 }
 ///// ボタン押下時の処理ここまで /////
@@ -128,19 +129,19 @@ function reset() {
 function getPointerOnCanvas(mouseEvent){
   // キャンバスをクリックしたときのマウスの座標を求める
   const rect = mouseEvent.target.getBoundingClientRect();
-  //ブラウザ上のクリック座標を求めるのです。
+  //ブラウザ上のクリック座標を求める
   const viewX = mouseEvent.clientX - rect.left
   const viewY = mouseEvent.clientY - rect.top
-  //キャンバスの表示サイズと実sizeの比も求めましょ。
+  //キャンバスの表示サイズと実sizeの比も求める
   const scaleWidth = canvas.clientWidth / canvas.width
   const scaleHeight = canvas.clientHeight / canvas.height
-  //ブラウザ上のクリック座標をキャンバス上の座標に変換するよ。
+  //ブラウザ上のクリック座標をキャンバス上の座標に変換する
   canvasX = Math.floor(viewX / scaleWidth)
   canvasY = Math.floor(viewY / scaleHeight)
 }
 
 function canvasOnMouseDown(e){
-  //キャンバス上のクリック座標を求め、矩形選択の始点を決定
+  //キャンバス上のクリック座標を求め、矩形選択の始点を決定する
   getPointerOnCanvas(e)
   console.log(canvasX, canvasY)
 
@@ -297,7 +298,7 @@ function videoRendering(){
           console.log('battanX',battanX,'battanY',battanY)
           console.log(battan_input.value)
 
-          //↓こいつ、ホントはbattan_inputをwatchして呼び出したかったんですが、なぜか変更を検知しやがらなかったのでクソみてーな書き方をしてます。助けて有識者
+          //本来はbattan_inputの変更をPatternDisplay側で検知したかった
           patternDisplay.value.onChangeBattanInput(battan_input)
         }
       } else {
@@ -363,7 +364,7 @@ function checkTargetColor(current, min, max) {
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
 
-  <PatternDisplay ref='patternDisplay' /><!--v-if="isScanning"-->
+  <PatternDisplay ref='patternDisplay'/><!--v-if="isScanning"-->
 </template>
 
 <style scoped>
