@@ -120,8 +120,6 @@ function reset() {
     battan_input.value[i] = [0, 0, 0, 0, 0];
   }
   isGaming = false
-  //本来はbattan_inputの変更をPatternDisplay側で検知したかった
-  patternDisplay.value.onChangeBattanInput(battan_input)
 }
 ///// ボタン押下時の処理ここまで /////
 
@@ -297,9 +295,6 @@ function videoRendering(){
           battan_input.value[battanY][battanX] = 1
           console.log('battanX',battanX,'battanY',battanY)
           console.log(battan_input.value)
-
-          //本来はbattan_inputの変更をPatternDisplay側で検知したかった
-          patternDisplay.value.onChangeBattanInput(battan_input)
         }
       } else {
         canvasCtx.strokeStyle = "rgb(255, 0, 0)"
