@@ -364,7 +364,7 @@ function checkTargetColor(current, min, max) {
     <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
 
-  <PatternDisplay ref='patternDisplay'/><!--v-if="isScanning"-->
+  <PatternDisplay ref='patternDisplay' :battan-input="battan_input"/><!--v-if="isScanning"-->
 </template>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 import battan_pattern from './patterns.js'
 console.log(battan_pattern.components)
 
@@ -19,6 +19,14 @@ let battan_merge = Array(11);
 for (var i = 0; i < battan_merge.length; i++) {
   battan_merge[i] = [0, 0, 0, 0, 0];
 }
+
+const props = defineProps({
+  battanInput: Array
+})
+watch(() => props.battanInput, () => {
+  console.log('hogeが変化した')
+},{deep:true})
+
 
 //App.vue内のbattan_inputが変化したときに呼ばれる
 function onChangeBattanInput(battan_input){
