@@ -25,7 +25,6 @@ function onChangeBattanInput(battan_input){
   console.log(battan_input.value)
 
   //バッタンのパターンを絞り込む
-  //ぜのちゃが作ったやつからまんま持ってきた
 
   //初期化
   matchList.value = []
