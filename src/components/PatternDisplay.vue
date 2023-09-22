@@ -24,13 +24,7 @@ const props = defineProps({
   battanInput: Array
 })
 watch(() => props.battanInput, () => {
-  console.log('hogeが変化した')
-},{deep:true})
-
-
-//App.vue内のbattan_inputが変化したときに呼ばれる
-function onChangeBattanInput(battan_input){
-  console.log(battan_input.value)
+    console.log(props.battanInput)
 
   //バッタンのパターンを絞り込む
 
@@ -43,14 +37,14 @@ function onChangeBattanInput(battan_input){
   for (var x = 0; x < 5; x++) {
     for (var y = 0; y < 11; y++) {
       // 入力済みのマスの場合、絞り込む
-      if (battan_input.value[y][x] == 1 || battan_input.value[y][x] == 2) {
+      if (props.battanInput[y][x] == 1 || props.battanInput[y][x] == 2) {
         var unmatch_cnt = 0;
         for (var p = 0; p < battan_pattern.components.length; p++) {
           // 既に不一致の場合、不一致カウントのみ
           if (battan_pattern_match[p] == 0) {
             unmatch_cnt++;
             // 今回のマスが不一致の場合、不一致を登録し、不一致カウント
-          } else if (battan_input.value[y][x] != battan_pattern.components[p][y][x]) {
+          } else if (props.battanInput[y][x] != battan_pattern.components[p][y][x]) {
             battan_pattern_match[p] = 0;
             unmatch_cnt++;
           }
@@ -83,7 +77,7 @@ function onChangeBattanInput(battan_input){
   for (var y = 0; y < 11; y++) {
     for (var x = 0; x < 5; x++) {
       battan_merge[y][x] = 0;	//初期化
-      if (battan_pattern_match_sum <= 0 || (battan_input.value[y][x] != 0)) continue;
+      if (battan_pattern_match_sum <= 0 || (props.battanInput[y][x] != 0)) continue;
       for (var l = 0; l < matchList.value.length - 1; l++) {
         if (battan_pattern.components[matchList.value[l]][y][x]
           != battan_pattern.components[matchList.value[l + 1]][y][x]) {
@@ -92,6 +86,12 @@ function onChangeBattanInput(battan_input){
       }
     }
   }
+},{deep:true})
+
+
+//App.vue内のbattan_inputが変化したときに呼ばれる
+function onChangeBattanInput(battan_input){
+
 }
 
 watch(matchList,()=>{
