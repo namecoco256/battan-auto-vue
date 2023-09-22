@@ -1,6 +1,7 @@
 <script setup>
-import { watch, ref, computed } from 'vue'
+import { watch, ref } from 'vue'
 import battan_pattern from './patterns.js'
+import InputDisplay from './InputDisplay.vue'
 console.log(battan_pattern.components)
 
 // 一致パターンリスト配列(15コ)
@@ -23,6 +24,7 @@ for (var i = 0; i < battan_merge.length; i++) {
 const props = defineProps({
   battanInput: Array
 })
+
 watch(() => props.battanInput, () => {
     console.log(props.battanInput)
 
@@ -109,6 +111,7 @@ defineExpose({
 </script>
 
 <template>
+  <InputDisplay :battan-input="props.battanInput" :battan-merge="battan_merge" :battan-pattern-match-num="battan_pattern_match_num" />
   <h1>パターン候補</h1>
   <ul class="matches">
     <li v-for="match in matchListUrl">
