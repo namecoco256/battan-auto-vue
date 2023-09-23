@@ -15,6 +15,7 @@ const canvasCtx = canvas.getContext('2d');                //2D描画コンテキ
 
 //描画
 watch(() => props.battanInput, () => {
+  console.log('i am display')
   canvasCtx.strokeStyle = "gray"
   canvasCtx.fillStyle = "white";
   canvasCtx.fillRect(0, 0, canvas.width * 3, canvasHeight * 3);
