@@ -61,6 +61,9 @@ const maxColor = { r:75, g:75, b:75 }
 const timerMinColor = [{ r: 80, g: 100, b: 80 }, { r: 1, g: 33, b: 84 }]
 const timerMaxColor = [{ r: 155, g: 150, b: 118 }, { r: 20, g: 43, b: 58 }]
 
+//ミニゲーム進行中か判定をするかしないか
+const isJudgeGaming = ref(true)
+
 let isGaming = false
 ///// 変数・配列の定義ここまで /////
 
@@ -179,14 +182,14 @@ watch(selectRectangle.value, () => {
 })
 
 function onSetRectangle() {
-  //選択範囲の数字をいじった時に呼ばれる関数。たびたび出てきてたでしょ？
+  //選択範囲の数字を確定した時に呼ばれる関数。たびたび出てきてたでしょ？
   
   //localstrageにselectRectangleの値を保存
   set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
   setBattanPosition()
 }
 function setBattanPosition() {
-  //バッタンの位置を配列に代入する関数。これ元々onSetRectangle()に入ってた処理なんですが、分けちゃって良かったですよね？
+  //バッタンの位置を配列に代入する関数。
 
   //横向きバッタン同士の間隔を求め、代入する
   let HBattanHInterval = Math.floor(selectRectangle.value.width * 0.1540)
@@ -277,7 +280,7 @@ function videoRendering(){
   if(isScanning.value) checkGaming()
   for(let battanY = 0; battanY < battan_position.length; battanY++){
     for(let battanX = 0; battanX < battan_position[battanY].length; battanX++) {
-      if(isScanning.value && isGaming) {
+    if(isScanning.value && (isGaming || !isJudgeGaming.value )) {
         //スキャン中なら、battan_positionの座標の色をスキャンしてバッタンが出てるかどうかを確認する
 
         //タイマーと被る可能性のあるバッタンをスキップ
@@ -305,6 +308,7 @@ function videoRendering(){
   }
 }
 
+//ミニゲーム進行中かどうかの判定
 function checkGaming() {
   const data = [
     canvasCtx.getImageData(battan_position[1][2].x, battan_position[1][2].y, 1, 1).data,
@@ -349,7 +353,8 @@ function checkTargetColor(current, min, max) {
     <br />
     <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
     <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
-    <button @click="reset">リセット</button>
+    <button @click="reset">リセット</button><br>
+    <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><!--この文言要検討-->
   </section>
 
   <div class="videoPreview">
