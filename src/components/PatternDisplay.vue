@@ -90,12 +90,6 @@ watch(() => props.battanInput, () => {
   }
 },{deep:true})
 
-
-//App.vue内のbattan_inputが変化したときに呼ばれる
-function onChangeBattanInput(battan_input){
-
-}
-
 watch(matchList,()=>{
   console.log(matchList.value)
   matchListUrl.value = []
@@ -105,9 +99,6 @@ watch(matchList,()=>{
   console.log(matchListUrl.value)
 })
 
-defineExpose({
-  onChangeBattanInput,
-})
 </script>
 
 <template>

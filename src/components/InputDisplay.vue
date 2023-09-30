@@ -1,7 +1,8 @@
 <script setup>
-import { watch, ref } from 'vue'
+//TODO:ぜのちゃのやつを使い回すより、自前で実装した方が楽かも
+import { watch, ref, onMounted } from 'vue'
 
-const canvasSize = { width: 512, height: 512 }
+const canvasSize = { width: 2048, height: 2048 }
 
 const props = defineProps({
   battanInput: Array,
@@ -10,15 +11,30 @@ const props = defineProps({
 
 })
 
-const canvas = document.getElementsByClassName('canvas')[0];   //mainキャンバスの要素を取得
-const canvasCtx = canvas.getContext('2d');                //2D描画コンテキストを取得
+//blockSize
+let bs = 20;
+let bx,by;
+
+// 描画ブロック配列
+// [y][x] = バッタン番号
+let block = Array(30);
+for(var i=0; i<block.length; i++){
+	block[i] = Array(30);
+}
+
+let canvas
+let canvasCtx
+onMounted(()=>{
+  canvas = document.getElementsByClassName('canvas')[1];   //mainキャンバスの要素を取得
+  canvasCtx = canvas.getContext('2d');                //2D描画コンテキストを取得
+})
 
 //描画
 watch(() => props.battanInput, () => {
-  console.log('i am display')
+  console.log('i am a display')
   canvasCtx.strokeStyle = "gray"
   canvasCtx.fillStyle = "white";
-  canvasCtx.fillRect(0, 0, canvas.width * 3, canvasHeight * 3);
+  canvasCtx.fillRect(0, 0, canvas.width * 3, canvas.height * 3);
   // 入力エリア
   for (var y = 0; y < 23; y++) {
     for (var x = 0; x < 23; x++) {
@@ -49,7 +65,7 @@ watch(() => props.battanInput, () => {
             canvasCtx.fillStyle = "orange";
             // 確定バッタン
           } else if (props.battanMerge[by][bx] == 0) {
-            if (battan_pattern[props.battanPatternMatchNum][by][bx] == 1) {
+            if (props.battan_pattern[props.battanPatternMatchNum][by][bx] == 1) {
               canvasCtx.fillStyle = "blue";
             } else {
               canvasCtx.fillStyle = "lightgreen";
@@ -73,7 +89,7 @@ watch(() => props.battanInput, () => {
 
     }
   }
-})
+},{deep:true})
 </script>
 
 <template>
@@ -81,3 +97,10 @@ watch(() => props.battanInput, () => {
     <canvas class="canvas" :width="canvasSize.width" :height="canvasSize.height" />
   </div>
 </template>
+
+<style scoped>
+  .canvas {
+    width:512px;
+    height: 512px;
+  }
+</style>

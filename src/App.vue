@@ -55,8 +55,8 @@ for (var i = 0; i < battan_position.length; i++) {
 }
 
 //バッタン色を指定。これを使ってバッタンがそこにいるかどうか判定する
-const minColor = { r:33, g:33, b:33 }
-const maxColor = { r:75, g:75, b:75 }
+const minColor = { r:60, g:60, b:60 }
+const maxColor = { r:90, g:90, b:90 }
 //ミニゲーム中かどうかを判断するためタイマーの色も指定。
 const timerMinColor = [{ r: 80, g: 100, b: 80 }, { r: 1, g: 33, b: 84 }]
 const timerMaxColor = [{ r: 155, g: 150, b: 118 }, { r: 20, g: 43, b: 58 }]
@@ -344,8 +344,8 @@ function checkTargetColor(current, min, max) {
 <template>
   <section class="settings">
     <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
-    <button class="onononCalibrateBtnBtnBtnBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</button>
-    <button class="onononCalibrateBtnBtnBtnBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</button>
+    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</button>
+    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</button>
     <br />
     <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
     <br />
