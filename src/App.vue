@@ -54,6 +54,7 @@ for (var i = 0; i < battan_position.length; i++) {
   battan_position[i] = [{ 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }, { 'x': 0, 'y': 0 }];
 }
 
+
 //バッタン色を指定。これを使ってバッタンがそこにいるかどうか判定する
 const minColor = { r:60, g:60, b:60 }
 const maxColor = { r:90, g:90, b:90 }
@@ -62,7 +63,7 @@ const timerMinColor = [{ r: 80, g: 100, b: 80 }, { r: 1, g: 33, b: 84 }]
 const timerMaxColor = [{ r: 155, g: 150, b: 118 }, { r: 20, g: 43, b: 58 }]
 
 //ミニゲーム進行中か判定をするかしないか
-const isJudgeGaming = ref(true)
+const isJudgeGaming = ref(false)
 
 let isGaming = false
 ///// 変数・配列の定義ここまで /////
