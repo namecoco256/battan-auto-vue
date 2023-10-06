@@ -1,6 +1,6 @@
 <script setup>
-//TODO:ぜのちゃのやつを使い回すより、自前で実装した方が楽かも
 import { watch, ref, onMounted } from 'vue'
+import battan_pattern from './patterns.js'
 
 const canvasSize = { width: 2048, height: 2048 }
 
@@ -101,6 +101,18 @@ function paint(){
         } else if (props.battanInput[by][bx] == 2) {
           canvasCtx.fillStyle = "lightgreen";
 
+        } else if (props.battanPatternMatchNum != -1) {
+          // 差分バッタン
+          if (props.battanMerge[by][bx] == 1) {
+            canvasCtx.fillStyle = "orange";
+            // 確定バッタン
+          } else if (props.battanMerge[by][bx] == 0) {
+            if (battan_pattern.components[props.battanPatternMatchNum][by][bx] == 1) {
+              canvasCtx.fillStyle = "blue";
+            } else {
+              canvasCtx.fillStyle = "lightgreen";
+            }
+          }
         }
       } else if (block[y][x] == -1) {
         canvasCtx.fillStyle = "white";
