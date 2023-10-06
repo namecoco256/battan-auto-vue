@@ -86,15 +86,6 @@ function paint(){
       if (block[y][x] > 0) {
         bx = Math.floor(block[y][x] % 100);
         by = Math.floor(block[y][x] / 100);
-        // マップが確定している場合
-        //if(battan_pattern_match_sum == 1){
-        //	if(battan_pattern[props.battanPatternMatchNum][by][bx] == 1){
-        //		canvasCtx.fillStyle = "blue";
-        //	}else{
-        //		canvasCtx.fillStyle = "lightgreen";
-        //	}
-        //// バッタンあり入力
-        //}else 
         if (props.battanInput[by][bx] == 1) {
           canvasCtx.fillStyle = "black";
           // バッタンなし入力
