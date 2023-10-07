@@ -8,7 +8,6 @@ const props = defineProps({
   battanInput: Array,
   battanMerge: Array,
   battanPatternMatchNum: Number
-
 })
 
 //blockSize
@@ -87,20 +86,22 @@ function paint(){
         bx = Math.floor(block[y][x] % 100);
         by = Math.floor(block[y][x] / 100);
         if (props.battanInput[by][bx] == 1) {
+          //バッタンあり入力
           canvasCtx.fillStyle = "black";
-          // バッタンなし入力
         } else if (props.battanInput[by][bx] == 2) {
+          // バッタンなし入力
           canvasCtx.fillStyle = "lightgreen";
-
         } else if (props.battanPatternMatchNum != -1) {
-          // 差分バッタン
           if (props.battanMerge[by][bx] == 1) {
+            // 差分バッタン
             canvasCtx.fillStyle = "orange";
-            // 確定バッタン
           } else if (props.battanMerge[by][bx] == 0) {
+            // 確定バッタン
             if (battan_pattern.components[props.battanPatternMatchNum][by][bx] == 1) {
+              //あり確定
               canvasCtx.fillStyle = "blue";
             } else {
+              //なし確定
               canvasCtx.fillStyle = "lightgreen";
             }
           }
