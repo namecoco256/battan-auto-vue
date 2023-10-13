@@ -39,6 +39,12 @@ let selectRectangle = ref({
 const isCalibrating = ref(false)
 //スキャン中かどうかのフラグ
 const isScanning = ref(false)
+//ミニゲーム進行中か判定をするかしないか
+const isJudgeGaming = ref(false)
+//ミニゲーム進行中かどうかの判定
+let isGaming = false
+//
+const isWindowSelected = ref(false)
 
 // バッタン入力配列
 // 0:未入力 1:バッタンあり
@@ -61,10 +67,6 @@ const maxColor = { r:90, g:90, b:90 }
 const timerMinColor = [{ r: 80, g: 100, b: 80 }, { r: 1, g: 33, b: 84 }]
 const timerMaxColor = [{ r: 155, g: 150, b: 118 }, { r: 20, g: 43, b: 58 }]
 
-//ミニゲーム進行中か判定をするかしないか
-const isJudgeGaming = ref(false)
-
-let isGaming = false
 ///// 変数・配列の定義ここまで /////
 
 ///// 起動時のセットアップ /////
@@ -228,6 +230,7 @@ function setBattanPosition() {
 
 ///// 画面取得とレンダリング /////
 function onWindowSelect() {
+  isWindowSelected.value = true
   // video要素に画面の映像を表示する
   console.log('start')
   media = navigator.mediaDevices.getDisplayMedia({
@@ -361,7 +364,7 @@ function checkTargetColor(current, min, max) {
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" />
+    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
   </div>
 
   <PatternDisplay ref='patternDisplay' :battan-input="battan_input"/><!--v-if="isScanning"-->
@@ -371,4 +374,3 @@ function checkTargetColor(current, min, max) {
 
 
 </style>
-

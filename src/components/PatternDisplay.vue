@@ -26,8 +26,7 @@ const props = defineProps({
 })
 
 watch(() => props.battanInput, () => {
-    console.log(props.battanInput)
-
+  console.log(props.battanInput)
   //バッタンのパターンを絞り込む
 
   //初期化
