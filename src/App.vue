@@ -230,8 +230,7 @@ function setBattanPosition() {
 
 ///// 画面取得とレンダリング /////
 function onWindowSelect() {
-  isWindowSelected.value = true
-  // video要素に画面の映像を表示する
+  // video要素にキャプチャ画面を表示する
   console.log('start')
   media = navigator.mediaDevices.getDisplayMedia({
     audio: false,
@@ -243,6 +242,8 @@ function onWindowSelect() {
     mediaSize.width = video.srcObject.getVideoTracks()[0].getSettings().width
     mediaSize.height = video.srcObject.getVideoTracks()[0].getSettings().height
     console.log(mediaSize)
+    //キャプチャ画面を表示
+    isWindowSelected.value = true
   });
 
   // video要素の映像をcanvasに描画する
@@ -364,13 +365,23 @@ function checkTargetColor(current, min, max) {
     <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
   </div>
   <div id="canvasPreview">
-    <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
+    <Transition mode="in-out">
+      <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
+    </Transition>
   </div>
 
-  <PatternDisplay ref='patternDisplay' :battan-input="battan_input"/><!--v-if="isScanning"-->
+
+  <PatternDisplay ref='patternDisplay' :battan-input="battan_input" class="transition" /><!--v-if="isScanning"-->
 </template>
 
 <style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
 
-
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
 </style>
