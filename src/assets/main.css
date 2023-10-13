@@ -5,6 +5,7 @@
 .canvas {
   height: 90%;
   max-height: 744px;
+  border-radius: 10px;
 }
 label {
   margin: 2px 1em;
@@ -15,15 +16,21 @@ label {
   display: flex;
   flex-wrap: wrap;
   list-style: none;
-  justify-content: space-between;
+  justify-content: center;
 }
 .matches li {
   margin:1em;
   padding:1em;
-  background-color: #aaaaaa;
+  background-color: #e3e3e3;
   width:fit-content;
+  border-radius:10px;
 }
 .matches li img{
   display: block;  
   object-fit: contain;
+  width:170px;
+}
+
+.blank{
+  height:300px
 }

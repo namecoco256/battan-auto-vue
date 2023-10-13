@@ -356,22 +356,23 @@ function checkTargetColor(current, min, max) {
     <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
     <br />
     <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
-    <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
-    <button @click="reset">リセット</button><br>
-    <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><!--この文言要検討-->
+    <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button><br>
+    <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+    
+    <div class="videoPreview">
+      <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
+    </div>
+    <div id="canvasPreview">
+      <Transition mode="in-out">
+        <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
+      </Transition>
+    </div>
+
+    <button @click="reset" v-show="isWindowSelected">入力リセット</button><br>
   </section>
 
-  <div class="videoPreview">
-    <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
-  </div>
-  <div id="canvasPreview">
-    <Transition mode="in-out">
-      <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
-    </Transition>
-  </div>
-
-
-  <PatternDisplay ref='patternDisplay' :battan-input="battan_input" class="transition" /><!--v-if="isScanning"-->
+  <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
+  <div class="blank"></div>
 </template>
 
 <style scoped>

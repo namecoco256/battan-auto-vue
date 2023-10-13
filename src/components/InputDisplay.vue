@@ -7,7 +7,7 @@ const canvasSize = { width: 2048, height: 2048 }
 const props = defineProps({
   battanInput: Array,
   battanMerge: Array,
-  battanPatternMatchNum: Number
+  battanPatternMatchNum: Number,
 })
 
 //blockSize
@@ -73,6 +73,7 @@ watch(() => props.battanInput, () => {
 //描画
 function paint(){
   console.log('i am a display')
+  console.log(props.battanMerge)
   canvasCtx.strokeStyle = "gray"
   canvasCtx.fillStyle = "white";
   canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
@@ -134,7 +135,7 @@ function paint(){
 
 <style scoped>
   .canvas {
-    width:512px;
-    height: 512px;
+    width:380px;
+    height: 380px;
   }
 </style>
