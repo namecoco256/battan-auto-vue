@@ -16,9 +16,9 @@ let bx,by;
 
 // 描画ブロック配列
 // [y][x] = バッタン番号
-let block = Array(30);
+let block = Array(23);
 for(var i=0; i<block.length; i++){
-	block[i] = Array(30);
+	block[i] = Array(23);
 }
 
 let canvas
@@ -27,7 +27,7 @@ onMounted(()=>{
   canvas = document.getElementsByClassName('canvas')[1];   //mainキャンバスの要素を取得
   canvasCtx = canvas.getContext('2d');                //2D描画コンテキストを取得
 
-  bs = canvas.height / 25;
+  bs = canvas.height / 23;
   makeMap()
   paint()
 })
