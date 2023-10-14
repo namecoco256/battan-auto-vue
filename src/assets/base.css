@@ -4,5 +4,5 @@ body {
   text-align: center;
 }
 .transition{
-  transition: 2px;
+  transition: 2s ease;
 }

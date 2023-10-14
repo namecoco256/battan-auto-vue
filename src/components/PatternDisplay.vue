@@ -8,7 +8,7 @@ console.log(battan_pattern.components)
 // [pattern] == 1:一致 0:不一致
 let battan_pattern_match = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 let battan_pattern_match_sum = 15;
-let battan_pattern_match_num = -1;
+let battan_pattern_match_num = ref(-1)
 // 一致パターンの添字が入る
 let matchList = ref([]);
 let matchListUrl = ref([])
@@ -16,13 +16,14 @@ let matchListUrl = ref([])
 // バッタン差分配列
 // 0: 差分なし 1: 差分あり
 // [y][x]
-let battan_merge = Array(11);
-for (var i = 0; i < battan_merge.length; i++) {
-  battan_merge[i] = [0, 0, 0, 0, 0];
+const battan_merge = ref(Array(11))
+for (var i = 0; i < battan_merge.value.length; i++) {
+  battan_merge.value[i] = [0, 0, 0, 0, 0];
 }
 
 const props = defineProps({
-  battanInput: Array
+  battanInput: Array,
+  canvasSize: Object,
 })
 
 watch(() => props.battanInput, () => {
@@ -54,7 +55,7 @@ watch(() => props.battanInput, () => {
         // これ以上処理する意味がないので終わり
         if (unmatch_cnt >= battan_pattern.components.length) {
           battan_pattern_match_sum = 0;
-          battan_pattern_match_num = -1;
+          battan_pattern_match_num.value = -1;
           console.log('一致なし')
           return;
         }
@@ -67,7 +68,7 @@ watch(() => props.battanInput, () => {
   for (var p = 0; p < battan_pattern.components.length; p++) {
     if (battan_pattern_match[p] == 1) {
       battan_pattern_match_sum++;
-      battan_pattern_match_num = p;
+      battan_pattern_match_num.value = p;
       matchList.value.push(p);
       console.log('一致' + "" + p + " ")
     }
@@ -77,12 +78,12 @@ watch(() => props.battanInput, () => {
   // 未入力かつ差分のあるバッタンを保存
   for (var y = 0; y < 11; y++) {
     for (var x = 0; x < 5; x++) {
-      battan_merge[y][x] = 0;	//初期化
+      battan_merge.value[y][x] = 0;	//初期化
       if (battan_pattern_match_sum <= 0 || (props.battanInput[y][x] != 0)) continue;
       for (var l = 0; l < matchList.value.length - 1; l++) {
         if (battan_pattern.components[matchList.value[l]][y][x]
           != battan_pattern.components[matchList.value[l + 1]][y][x]) {
-          battan_merge[y][x] = 1;
+          battan_merge.value[y][x] = 1;
         }
       }
     }
@@ -96,6 +97,7 @@ watch(matchList,()=>{
     matchListUrl.value[i] = 'src/assets/pattern-image/'+matchList.value[i]+'.png'
   }
   console.log(matchListUrl.value)
+  console.log(battan_merge.value)
 })
 
 </script>
@@ -103,13 +105,37 @@ watch(matchList,()=>{
 <template>
   <InputDisplay :battan-input="props.battanInput" :battan-merge="battan_merge" :battan-pattern-match-num="battan_pattern_match_num" />
   <h1>パターン候補</h1>
-  <ul class="matches">
-    <li v-for="match in matchListUrl">
-      <img :src="match">
-    </li>
-  </ul>
+  <div class="displayArea">
+    <ul class="matches" key="matches" >
+      <TransitionGroup>
+        <li class="match" v-for="match in matchListUrl" :key="match">
+          <img :src="match">
+        </li>
+      </TransitionGroup>
+    </ul>
+  </div>
+  <div class="blank" v-if="!matchListUrl[0]"></div>
 </template>
 
 <style scoped>
+.v-move,
+.v-enter-active,
+.v-leave-active {
+  transition:0.5s ease;
+}
 
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+.v-leave-active{
+  position: absolute;
+}
+.displayArea{
+  max-width: 80em;
+  margin:auto;
+}
+.displayArea .matches{
+  padding-inline-start:0;
+}
 </style>
