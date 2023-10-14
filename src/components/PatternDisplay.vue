@@ -114,7 +114,7 @@ watch(matchList,()=>{
       </TransitionGroup>
     </ul>
   </div>
-  <div class="blank" v-if="!matchList[0]"></div>
+  <div class="blank" v-if="!matchListUrl[0]"></div>
 </template>
 
 <style scoped>
