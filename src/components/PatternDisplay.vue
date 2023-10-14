@@ -114,13 +114,14 @@ watch(matchList,()=>{
       </TransitionGroup>
     </ul>
   </div>
+  <div class="blank" v-if="!matchList[0]"></div>
 </template>
 
 <style scoped>
 .v-move,
 .v-enter-active,
 .v-leave-active {
-  transition:2s ease;
+  transition:0.5s ease;
 }
 
 .v-enter-from,
@@ -129,5 +130,12 @@ watch(matchList,()=>{
 }
 .v-leave-active{
   position: absolute;
+}
+.displayArea{
+  max-width: 80em;
+  margin:auto;
+}
+.displayArea .matches{
+  padding-inline-start:0;
 }
 </style>

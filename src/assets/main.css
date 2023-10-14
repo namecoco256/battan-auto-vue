@@ -28,7 +28,7 @@ label {
 .matches li img{
   display: block;  
   object-fit: contain;
-  width:170px;
+  width:160px;
 }
 
 .blank{
