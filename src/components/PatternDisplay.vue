@@ -121,7 +121,7 @@ watch(matchList,()=>{
 .v-move,
 .v-enter-active,
 .v-leave-active {
-  transition:0.5s ease;
+  transition:0.2s ease;
 }
 
 .v-enter-from,
