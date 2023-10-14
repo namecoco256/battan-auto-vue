@@ -359,15 +359,17 @@ function checkTargetColor(current, min, max) {
     <div class="videoPreview">
       <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
     </div>
-    <div id="canvasPreview">
-      <Transition mode="in-out">
-        <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height" v-show="isWindowSelected" />
-      </Transition>
-    </div>
-    <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
-    <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
-    <button @click="reset" v-show="isWindowSelected">入力リセット</button><br>
-    <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+    <Transition mode="in-out">
+      <div id="canvasPreview" v-show="isWindowSelected">
+        <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
+        <br>
+        <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
+        <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
+        <button @click="reset" >入力リセット</button><br>
+        <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+      </div>
+    </Transition>
+
   </section>
 
   <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
@@ -376,7 +378,7 @@ function checkTargetColor(current, min, max) {
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 2s ease;
 }
 
 .v-enter-from,
