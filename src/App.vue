@@ -347,25 +347,31 @@ function checkTargetColor(current, min, max) {
 
 <template>
   <section class="settings">
-    <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
-    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</button>
-    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</button>
+    <v-btn variant="outlined" class="startBtn" @click="onWindowSelect">ウィンドウ選択</v-btn>
+    <v-btn class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
+    <v-btn class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
     <br />
-    <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
-    <br />
-    <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
-    <br />
+    <v-layout wrap>
+      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="pa-md-4" /></v-flex>
+      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="pa-md-4" /></v-flex>
+      <br />
+      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="pa-md-4"/></v-flex>
+      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="pa-md-4"/></v-flex>
+      <br />
+    </v-layout>
     
     <div class="videoPreview">
       <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
     </div>
     <Transition mode="in-out">
       <div id="canvasPreview" v-show="isWindowSelected">
-        <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
+        <div class="scrollWrapper">
+          <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
+        </div>
         <br>
-        <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
-        <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
-        <button @click="reset" >入力リセット</button><br>
+        <v-btn class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</v-btn>
+        <v-btn class="scanBtn" @click="onScanBtn" v-else>スキャン停止</v-btn>
+        <v-btn @click="reset" >入力リセット</v-btn><br>
         <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
       </div>
     </Transition>
