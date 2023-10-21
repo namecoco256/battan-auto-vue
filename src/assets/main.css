@@ -37,3 +37,7 @@ label {
 .blank{
   height:300px
 }
+
+button.v-btn {
+  margin:1em;
+}
