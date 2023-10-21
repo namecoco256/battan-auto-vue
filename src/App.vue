@@ -347,19 +347,35 @@ function checkTargetColor(current, min, max) {
 
 <template>
   <section class="settings">
-    <v-btn variant="outlined" class="startBtn" @click="onWindowSelect">ウィンドウ選択</v-btn>
-    <v-btn class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
-    <v-btn class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
+    <v-row >
+      <v-col>
+        <v-btn variant="outlined" class="startBtn" @click="onWindowSelect">ウィンドウ選択</v-btn>
+      </v-col>
+    </v-row>
     <br />
-    <v-layout wrap>
-      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="pa-md-4" /></v-flex>
-      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="pa-md-4" /></v-flex>
-      <br />
-      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="pa-md-4"/></v-flex>
-      <v-flex xs6 sm6 md6 text-center my-5><v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="pa-md-4"/></v-flex>
-      <br />
-    </v-layout>
-    
+    <v-row no-gutters>
+      <v-col>
+        <v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="ma-2 pa-2" />
+      </v-col>
+      <v-col>
+        <v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="ma-2 pa-2" />
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col>
+        <v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="ma-2 pa-2"/>
+      </v-col>
+      <v-col>
+        <v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="ma-2 pa-2"/>
+      </v-col>
+    </v-row>
+
+    <v-row no-gutters>
+      <v-col>
+        <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
+        <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
+      </v-col>
+    </v-row>
     <div class="videoPreview">
       <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
     </div>
