@@ -104,6 +104,7 @@ watch(matchList,()=>{
 
 <template>
   <InputDisplay :battan-input="props.battanInput" :battan-merge="battan_merge" :battan-pattern-match-num="battan_pattern_match_num" />
+  <br>
   <h1>パターン候補</h1>
   <div class="displayArea">
     <ul class="matches" key="matches" >

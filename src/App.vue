@@ -355,9 +355,6 @@ function checkTargetColor(current, min, max) {
     </div>
     <Transition mode="in-out">
       <div id="canvasPreview" v-show="isWindowSelected">
-        <div class="scrollWrapper">
-          <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
-        </div>
         <v-container>
           <v-expansion-panels>
             <v-expansion-panel>
@@ -376,7 +373,7 @@ function checkTargetColor(current, min, max) {
                           v-if="expanded"
                           key="0"
                         >
-                          スタート地点のパネルの左上の角を始点に、<br>ゴール地点のパネルの右下の角を終点に指定してくだい。
+                          スタート地点のパネルの左上の角を始点に、ゴール地点のパネルの右下の角を終点に指定してくだい。
                         </span>
                         <span
                           v-else
@@ -416,6 +413,9 @@ function checkTargetColor(current, min, max) {
             </v-expansion-panel>
           </v-expansion-panels>
         </v-container>
+        <div class="scrollWrapper">
+          <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
+        </div>
         <br>
         <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</v-btn>
         <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-else>スキャン停止</v-btn>
@@ -425,8 +425,9 @@ function checkTargetColor(current, min, max) {
     </Transition>
 
   </section>
-
-  <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
+  <div v-show="isWindowSelected">
+    <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
+  </div>
 </template>
 
 <style scoped>
