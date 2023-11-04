@@ -356,64 +356,64 @@ function checkTargetColor(current, min, max) {
       </div>
       <Transition mode="in-out">
         <div id="canvasPreview" v-show="isWindowSelected">
-          <v-flex class="d">
-            <v-expansion-panels>
-              <v-expansion-panel>
-                <v-expansion-panel-title>
-                  <template v-slot:default="{ expanded }">
-                    <v-row no-gutters>
-                      <v-col cols="4" class="d-flex justify-start">
-                        フィールド設定
-                      </v-col>
-                      <v-col
-                        cols="8"
-                        class="text-grey"
-                      >
-                        <v-fade-transition leave-absolute>
-                          <span
-                            v-if="expanded"
-                            key="0"
-                          >
-                            スタート地点のパネルの左上の角を始点に、ゴール地点のパネルの右下の角を終点に指定してくだい。
-                          </span>
-                          <span
-                            v-else
-                            key="1"
-                          >
-                          </span>
-                        </v-fade-transition>
-                      </v-col>
-                    </v-row>
-                  </template>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
+          <!-- フィールド設定  -->
+          
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-title>
+                <template v-slot:default="{ expanded }">
                   <v-row no-gutters>
-                    <v-col>
-                      <v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="ma-2 pa-2" />
+                    <v-col cols="3" class="d-flex justify-start">
+                      フィールド設定
                     </v-col>
-                    <v-col>
-                      <v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="ma-2 pa-2" />
+                    <v-col
+                      cols="9"
+                      class="text-grey"
+                    >
+                      <v-fade-transition leave-absolute>
+                        <span
+                          v-if="expanded"
+                          key="0"
+                        >
+                          スタート地点のパネルの左上の角を始点に、ゴール地点のパネルの右下の角を終点に指定してくだい。
+                        </span>
+                        <span
+                          v-else
+                          key="1"
+                        >
+                        </span>
+                      </v-fade-transition>
                     </v-col>
                   </v-row>
-                  <v-row no-gutters>
-                    <v-col>
-                      <v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="ma-2 pa-2"/>
-                    </v-col>
-                    <v-col>
-                      <v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="ma-2 pa-2"/>
-                    </v-col>
-                  </v-row>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="ma-2 pa-2" />
+                  </v-col>
+                  <v-col>
+                    <v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="ma-2 pa-2" />
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="ma-2 pa-2"/>
+                  </v-col>
+                  <v-col>
+                    <v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="ma-2 pa-2"/>
+                  </v-col>
+                </v-row>
 
-                  <v-row no-gutters>
-                    <v-col>
-                      <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
-                      <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-flex>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
+                    <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
 
           <div class="scrollWrapper">
             <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
@@ -442,5 +442,8 @@ function checkTargetColor(current, min, max) {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.v-application{
+    font-family: 'Noto Sans', sans-serif;
 }
 </style>
