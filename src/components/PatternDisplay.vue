@@ -90,16 +90,9 @@ watch(() => props.battanInput, () => {
   }
 },{deep:true})
 
-watch(matchList,()=>{
-  console.log(matchList.value)
-  matchListUrl.value = []
-  for(i=0;i<matchList.value.length;i++){
-    matchListUrl.value[i] = 'src/assets/pattern-image/'+matchList.value[i]+'.png'
-  }
-  console.log(matchListUrl.value)
-  console.log(battan_merge.value)
-})
-
+const getImage = (fileName) => {
+  return new URL(`../assets/pattern-image/${fileName}.png`, import.meta.url).href
+}
 </script>
 
 <template>
@@ -109,8 +102,8 @@ watch(matchList,()=>{
   <div class="displayArea">
     <ul class="matches" key="matches" >
       <TransitionGroup>
-        <li class="match" v-for="match in matchListUrl" :key="match">
-          <img :src="match">
+        <li class="match" v-for="match in matchList" :key="match">
+          <img :src="getImage(match)">
         </li>
       </TransitionGroup>
     </ul>
