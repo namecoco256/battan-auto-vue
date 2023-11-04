@@ -7,6 +7,9 @@
   max-height: 744px;
   border-radius: 10px;
 }
+.scrollWrapper {
+  overflow:auto;
+}
 label {
   margin: 2px 1em;
   display: inline-block;
@@ -33,4 +36,8 @@ label {
 
 .blank{
   height:300px
+}
+
+button.v-btn {
+  margin:1em;
 }

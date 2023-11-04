@@ -346,33 +346,91 @@ function checkTargetColor(current, min, max) {
 </script>
 
 <template>
-  <section class="settings">
-    <button class="startBtn" @click="onWindowSelect">ウィンドウ選択</button>
-    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</button>
-    <button class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</button>
-    <br />
-    <label>始点X<input type="text" v-model="selectRectangle.startX" /></label> <label>横幅<input type="text" v-model="selectRectangle.width" /></label>
-    <br />
-    <label>始点Y<input type="text" v-model="selectRectangle.startY"/></label> <label>縦幅<input type="text" v-model="selectRectangle.height"/></label>
-    <br />
-    
-    <div class="videoPreview">
-      <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
-    </div>
-    <Transition mode="in-out">
-      <div id="canvasPreview" v-show="isWindowSelected">
-        <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
-        <br>
-        <button class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</button>
-        <button class="scanBtn" @click="onScanBtn" v-else>スキャン停止</button>
-        <button @click="reset" >入力リセット</button><br>
-        <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+  <v-app>
+    <section class="settings">
+      <v-btn variant="outlined" class="startBtn" @click="onWindowSelect">ウィンドウ選択</v-btn>
+      <br>
+
+      <div class="videoPreview">
+        <video class="video" style="display:none;" :width="screenSize.width" :height="screenSize.height" autoplay />
       </div>
-    </Transition>
+      <Transition mode="in-out">
+        <div id="canvasPreview" v-show="isWindowSelected">
+          <!-- フィールド設定  -->
+          
+          <v-expansion-panels>
+            <v-expansion-panel>
+              <v-expansion-panel-title>
+                <template v-slot:default="{ expanded }">
+                  <v-row no-gutters>
+                    <v-col cols="3" class="d-flex justify-start">
+                      フィールド設定
+                    </v-col>
+                    <v-col
+                      cols="9"
+                      class="text-grey"
+                    >
+                      <v-fade-transition leave-absolute>
+                        <span
+                          v-if="expanded"
+                          key="0"
+                        >
+                          スタート地点のパネルの左上の角を始点に、ゴール地点のパネルの右下の角を終点に指定してくだい。
+                        </span>
+                        <span
+                          v-else
+                          key="1"
+                        >
+                        </span>
+                      </v-fade-transition>
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="ma-2 pa-2" />
+                  </v-col>
+                  <v-col>
+                    <v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="ma-2 pa-2" />
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="ma-2 pa-2"/>
+                  </v-col>
+                  <v-col>
+                    <v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="ma-2 pa-2"/>
+                  </v-col>
+                </v-row>
 
-  </section>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-if="!isCalibrating">キャリブレーション</v-btn>
+                    <v-btn variant="outlined" class="onCalibrateBtn" @click="onCalibrateBtn" v-else>キャリブレーションをキャンセル</v-btn>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+          </v-expansion-panels>
 
-  <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
+          <div class="scrollWrapper">
+            <canvas class="canvas" @mousedown="canvasOnMouseDown" @mouseup="canvasOnMouseUp" :width="canvasSize.width" :height="canvasSize.height"  />
+          </div>
+          <br>
+          <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</v-btn>
+          <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-else>スキャン停止</v-btn>
+          <v-btn variant="outlined" @click="reset" >入力リセット</v-btn><br>
+          <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+        </div>
+      </Transition>
+
+    </section>
+    <div v-show="isWindowSelected">
+      <PatternDisplay ref='patternDisplay' :battan-input="battan_input" :canvas-size="canvasSize" class="transition" />
+    </div>
+  </v-app>
 </template>
 
 <style scoped>
@@ -384,5 +442,8 @@ function checkTargetColor(current, min, max) {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.v-application{
+    font-family: 'Noto Sans', sans-serif;
 }
 </style>
