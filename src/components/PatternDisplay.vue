@@ -90,18 +90,9 @@ watch(() => props.battanInput, () => {
   }
 },{deep:true})
 
-// watch(matchList,()=>{
-//   console.log(matchList.value)
-//   matchListUrl.value = []
-//   for(i=0;i<matchList.value.length;i++){
-//     matchListUrl.value[i] = '../assets/pattern-image/'+matchList.value[i]+'.png'
-//   }
-//   console.log(matchListUrl.value)
-//   console.log(battan_merge.value)
-// })
 const getImage = (fileName) => {
-  return new URL(`../assets/pattern-image/${fileName}.png`, import.meta.url).href;
-};
+  return new URL(`../assets/pattern-image/${fileName}.png`, import.meta.url).href
+}
 </script>
 
 <template>
