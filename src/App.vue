@@ -25,6 +25,8 @@ const patternDisplay = ref()
 let selectRectangle = ref({
   startX: 0,
   startY: 0,
+  endX: 0,
+  endY: 0,
   width: 0,
   height: 0,
   clear: function () {
@@ -82,8 +84,10 @@ onMounted(() => {
     if(val){
       selectRectangle.value.startX = val[0]
       selectRectangle.value.startY = val[1]
-      selectRectangle.value.width = val[2]
-      selectRectangle.value.height = val[3]
+      selectRectangle.value.endX = val[2]
+      selectRectangle.value.endY = val[3]
+      selectRectangle.value.width = val[4]
+      selectRectangle.value.height = val[5]
     }
   })
 })
@@ -158,8 +162,8 @@ function canvasOnMouseDown(e){
 function onMouseMove(e){
   //マウスが動いた時にselectRectangleの横幅、縦幅を指定しなおす
   getPointerOnCanvas(e)
-  selectRectangle.value.width = canvasX - selectRectangle.value.startX
-  selectRectangle.value.height = canvasY - selectRectangle.value.startY
+  selectRectangle.value.endX = canvasX
+  selectRectangle.value.endY = canvasY
   videoRendering()
   //videoRendering()をここで呼ぶことで、選択範囲を示す赤線を書き直す
 }
@@ -173,21 +177,26 @@ function canvasOnMouseUp(e){
   onSetRectangle()
 }
 
+//selectRectangleの変更検知
 watch(selectRectangle.value, () => {
+  selectRectangle.value.width = selectRectangle.value.endX - selectRectangle.value.startX
+  selectRectangle.value.height = selectRectangle.value.endY - selectRectangle.value.startY
+
   if (!isCalibrating.value) {
     console.log('changed!')
     canvasCtx.strokeStyle = "rgb(255, 0, 0)"
-    canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height)
+    canvasCtx.strokeRect(selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.endX, selectRectangle.value.endY, selectRectangle.value.width, selectRectangle.value.height)
 
     onSetRectangle()
   }
 })
-
 function onSetRectangle() {
   //選択範囲の数字を確定した時に呼ばれる関数。たびたび出てきてたでしょ？
   
+  selectRectangle.value.width = selectRectangle.value.endX - selectRectangle.value.startX
+  selectRectangle.value.height = selectRectangle.value.endY - selectRectangle.value.startY
   //localstrageにselectRectangleの値を保存
-  set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.width, selectRectangle.value.height])
+  set('selectRectangle', [selectRectangle.value.startX, selectRectangle.value.startY, selectRectangle.value.endX, selectRectangle.value.endY, selectRectangle.value.width, selectRectangle.value.height])
   setBattanPosition()
 }
 function setBattanPosition() {
@@ -393,7 +402,7 @@ function checkTargetColor(current, min, max) {
                     <v-text-field label="始点X" type="text" v-model="selectRectangle.startX" class="ma-2 pa-2" />
                   </v-col>
                   <v-col>
-                    <v-text-field label="横幅" type="text" v-model="selectRectangle.width" class="ma-2 pa-2" />
+                    <v-text-field label="終点X" type="text" v-model="selectRectangle.endX" class="ma-2 pa-2" />
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
@@ -401,7 +410,7 @@ function checkTargetColor(current, min, max) {
                     <v-text-field label="始点Y" type="text" v-model="selectRectangle.startY" class="ma-2 pa-2"/>
                   </v-col>
                   <v-col>
-                    <v-text-field label="横幅" type="text" v-model="selectRectangle.height" class="ma-2 pa-2"/>
+                    <v-text-field label="終点Y" type="text" v-model="selectRectangle.endY" class="ma-2 pa-2"/>
                   </v-col>
                 </v-row>
 
