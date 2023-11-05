@@ -299,6 +299,7 @@ function videoRendering(){
         //タイマーと被る可能性のあるバッタンをスキップ
         if(battanY == 0) continue
         if(battanY == 1 && battanX == 2) continue
+        if(battanY == 1 && battanX == 3) continue
         if(battanY == 10) continue
 
         //まずbattanX, BattanYの色を取得
