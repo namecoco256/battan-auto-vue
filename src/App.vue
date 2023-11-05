@@ -432,7 +432,7 @@ function checkTargetColor(current, min, max) {
           <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-if="!isScanning">スキャン開始</v-btn>
           <v-btn variant="outlined" class="scanBtn" @click="onScanBtn" v-else>スキャン停止</v-btn>
           <v-btn variant="outlined" @click="reset" >入力リセット</v-btn><br>
-          <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する</label><br>
+          <label><input type="checkbox" v-model="isJudgeGaming">ミニゲームの進行を判定する(非推奨)</label><br>
         </div>
       </Transition>
 
